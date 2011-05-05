@@ -1,0 +1,24 @@
+\name{lbsDeleteDocuments}
+\alias{lbsDeleteDocuments}
+\title{Delete given documents}
+\usage{lbsDeleteDocuments(conn, idDocuments)}
+\description{Deletes given documents from a Local Bibliometric Storage.}
+\details{For safety reasons, an SQL transaction  opened at the beginning of the
+removal process is not committed (closed) automatically.
+You should do it on your own (or rollback it), see Examples below.}
+\value{\code{TRUE} on success.}
+\seealso{\code{\link{lbsGetInfoDocuments}}, \code{\link{lbsFindDuplicateTitles}}}
+\arguments{\item{conn}{a connection object as produced by \code{\link{lbsConnect}}.}
+\item{idDocuments}{a list of numeric vectors or a numeric vector;
+document identifiers (see \code{IdDocument} in the table \code{Biblio_Documents})
+to be deleted.}}
+\examples{\dontrun{
+conn <- lbsConnect("Bibliometrics.db");
+## ...
+listdoc <- lbsFindDuplicateTitles(conn,
+ignoreTitles.like=c("In this issue\%", "\%Editorial", "\%Introduction",
+"\%In this issue", "Letter to \%", "\%Preface"),
+aggressiveness=2);
+lbsDeleteDocuments(conn, listdoc);
+dbCommit(conn);
+## ...}}
