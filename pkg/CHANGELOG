@@ -4,7 +4,14 @@ CITAN PACKAGE CHANGELOG
 
 *******************************************************************************
 
-2011.04-3 /2011-04-XX/
+2011.05-2 /2011-05-XX/ - under development
+
+
+
+
+*******************************************************************************
+
+2011.05-1 /2011-05-14/
    * CITAN now depends on hash.
    * discrpareto2.goftest() - goodness-of-fit test for a discrete
        Pareto-Type II distribution.

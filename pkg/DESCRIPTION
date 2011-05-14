@@ -17,9 +17,12 @@ Description: CITAN is a library of functions useful in - but not
     analyze many phenomena encountered in the social sciences.
 Author@R: c(person("Marek", "Gagolewski", email =
     "gagolews@ibspan.waw.pl"))
-Version: 2011.04-3
+Version: 2011.05-2
 URL: http://CRAN.R-project.org/package=CITAN
-Date: 2011-04-XX
+    http://www.ibspan.waw.pl/~gagolews/
+    http://r-forge.r-project.org/projects/citan/
+BugReports: http://r-forge.r-project.org/tracker/?atid=4279&group_id=1075
+Date: 2011-05-XX
 Depends: R (>= 2.10.0), DBI, RSQLite, RGtk2, hash, ADGofTest
 Collate: 'biblio.internal.R' 'biblio.assess.R' 'biblio.clear.R'
     'biblio.connect.R' 'biblio.create.R' 'biblio.duplicates.R'
