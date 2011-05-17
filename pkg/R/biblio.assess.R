@@ -111,7 +111,7 @@ lbsAssess <- function(citseq, f=list(length, index.h), captions=c("length", "ind
 		wh <- numeric(0);
 		for (i in 1:length(f))
 		{
-			wh <- c(wh, which(rank(-result[,i+1],ties="min")<=bestRanks));
+			wh <- c(wh, which(rank(-result[,i+1],ties.method="min")<=bestRanks));
 		}
 		return(result[unique(sort(wh,decreasing=TRUE)),]);
 	} else return(result);

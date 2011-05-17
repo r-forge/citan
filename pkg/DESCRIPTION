@@ -7,8 +7,8 @@ Type: Package
 Author: Marek Gagolewski <gagolews@ibspan.waw.pl>
 Description: CITAN is a library of functions useful in - but not
     limited to - quantitative research in the field of scientometrics.
-    It contains various tools for preprocessing bibliometric data
-    retrieved e.g. from Elsevier's SciVerse Scopus and calculating
+    It contains various tools for preprocessing bibliographic data
+    retrieved e.g. from Elsevier's SciVerse Scopus and calculating bibliometric
     impact of individuals. Also, many functions dealing with
     Pareto-Type II (GPD) and Discretized Pareto-Type II statistical
     models are included (e.g. Zhang-Stephens and MLE estimators,
@@ -18,9 +18,7 @@ Description: CITAN is a library of functions useful in - but not
 Author@R: c(person("Marek", "Gagolewski", email =
     "gagolews@ibspan.waw.pl"))
 Version: 2011.05-2
-URL: http://CRAN.R-project.org/package=CITAN
-    http://www.ibspan.waw.pl/~gagolews/
-    http://r-forge.r-project.org/projects/citan/
+URL: http://www.ibspan.waw.pl/~gagolews/CITAN/
 BugReports: http://r-forge.r-project.org/tracker/?atid=4279&group_id=1075
 Date: 2011-05-XX
 Depends: R (>= 2.10.0), DBI, RSQLite, RGtk2, hash, ADGofTest

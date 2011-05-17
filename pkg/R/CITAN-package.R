@@ -20,8 +20,8 @@
 #' \pkg{CITAN} is a library of functions useful in --- but not limited to ---
 #' quantitative research in the field of scientometrics.
 #' It contains various tools for preprocessing 
-#' bibliometric data retrieved e.g. from Elsevier's \emph{SciVerse Scopus} and
-#' calculating impact of individuals.
+#' bibliographic data retrieved e.g. from Elsevier's \emph{SciVerse Scopus} and
+#' calculating bibliometric impact of individuals.
 #' Also, many functions dealing with Pareto-Type II (GPD)
 #' and Discretized Pareto-Type II statistical models
 #' are included (e.g. Zhang-Stephens and MLE estimators,

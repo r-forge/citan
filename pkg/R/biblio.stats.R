@@ -252,7 +252,7 @@ lbsDescriptiveStats <- function(conn,
 	
 	if (show[1L])
 	{
-		tab <- sort(table(res$Type), dec=TRUE);
+		tab <- sort(table(res$Type), decreasing=TRUE);
 		barplot(tab, main=main, ...);
 		mtext(as.graphicsAnnot(captions[1]), 3, 0.25, cex=cex.caption);
 		
