@@ -1,6 +1,8 @@
 Package: CITAN
 License: LGPL (>= 3)
 Maintainer: Marek Gagolewski <gagolews@ibspan.waw.pl>
+BugReports:
+    http://r-forge.r-project.org/tracker/?atid=4279&group_id=1075
 LazyData: true
 Title: CITation ANalysis toolpack
 Type: Package
@@ -8,19 +10,19 @@ Author: Marek Gagolewski <gagolews@ibspan.waw.pl>
 Description: CITAN is a library of functions useful in - but not
     limited to - quantitative research in the field of scientometrics.
     It contains various tools for preprocessing bibliographic data
-    retrieved e.g. from Elsevier's SciVerse Scopus and calculating bibliometric
-    impact of individuals. Also, many functions dealing with
-    Pareto-Type II (GPD) and Discretized Pareto-Type II statistical
-    models are included (e.g. Zhang-Stephens and MLE estimators,
-    goodness-of-fit and two-sample tests, confidence intervals for the
-    theoretical Hirsch index etc.). They may be used to describe and
-    analyze many phenomena encountered in the social sciences.
+    retrieved e.g. from Elsevier's SciVerse Scopus and calculating
+    bibliometric impact of individuals. Also, many functions dealing
+    with Pareto-Type II (GPD) and Discretized Pareto-Type II
+    statistical models are included (e.g. Zhang-Stephens and MLE
+    estimators, goodness-of-fit and two-sample tests, confidence
+    intervals for the theoretical Hirsch index etc.). They may be used
+    to describe and analyze many phenomena encountered in the social
+    sciences.
 Author@R: c(person("Marek", "Gagolewski", email =
     "gagolews@ibspan.waw.pl"))
-Version: 2011.05-2
+Version: 2011.06-1
 URL: http://www.ibspan.waw.pl/~gagolews/CITAN/
-BugReports: http://r-forge.r-project.org/tracker/?atid=4279&group_id=1075
-Date: 2011-05-XX
+Date: 2011-06-XX
 Depends: R (>= 2.10.0), DBI, RSQLite, RGtk2, hash, ADGofTest
 Collate: 'biblio.internal.R' 'biblio.assess.R' 'biblio.clear.R'
     'biblio.connect.R' 'biblio.create.R' 'biblio.duplicates.R'
