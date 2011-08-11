@@ -18,11 +18,9 @@ Description: CITAN is a library of functions useful in - but not
     intervals for the theoretical Hirsch index etc.). They may be used
     to describe and analyze many phenomena encountered in the social
     sciences.
-Author@R: c(person("Marek", "Gagolewski", email =
-    "gagolews@ibspan.waw.pl"))
-Version: 2011.06-1
+Version: 2011.08-1
 URL: http://www.ibspan.waw.pl/~gagolews/CITAN/
-Date: 2011-06-XX
+Date: 2011-08-11
 Depends: R (>= 2.10.0), DBI, RSQLite, RGtk2, hash, ADGofTest
 Collate: 'biblio.internal.R' 'biblio.assess.R' 'biblio.clear.R'
     'biblio.connect.R' 'biblio.create.R' 'biblio.duplicates.R'

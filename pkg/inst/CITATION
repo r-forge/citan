@@ -1,0 +1,18 @@
+citHeader("To cite package 'CITAN' in publications use:")
+
+citEntry(entry = "Article",
+  title        = "Bibliometric impact assessment with {R} and the {CITAN} package",
+  author       = personList(as.person("Marek Gagolewski")),
+  journal      = "Journal of Informetrics",
+  year         = "2011",
+#  volume       = "37",
+#  number       = "8",
+#  pages        = "1--52",
+  url          = "http://www.ibspan.waw.pl/~gagolews/CITAN/",
+  doi          = "10.1016/j.joi.2011.06.006",
+
+  textVersion  =
+  paste("Marek Gagolewski (2011).",
+        "Bibliometric impact assessment with R and the CITAN package.",
+        "Journal of Informetrics. In press, doi:10.1016/j.joi.2011.06.006.")
+)
