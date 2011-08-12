@@ -21,7 +21,7 @@ Description: CITAN is a library of functions useful in -
     many phenomena encountered in the social sciences.
 Version: 2011.08-2
 URL: http://www.ibspan.waw.pl/~gagolews/CITAN/
-Date: 2011-08-11
+Date: 2011-08-12
 Depends:
     R (>= 2.10.0),
     DBI,

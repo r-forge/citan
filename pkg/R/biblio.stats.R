@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski <gagolews@ibspan.waw.pl>
+## Copyright 2011 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
 ##
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with CITAN. If not, see <http://www.gnu.org/licenses/>.
-
 
 
 #' @include biblio.internal.R
