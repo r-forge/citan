@@ -22,7 +22,7 @@
 #' It contains various tools for preprocessing 
 #' bibliographic data retrieved e.g. from Elsevier's \emph{SciVerse Scopus} and
 #' calculating bibliometric impact of individuals.
-#' Also, many functions dealing with Pareto-Type II (GPD)
+#' Also, some functions dealing with Pareto-Type II (GPD)
 #' and Discretized Pareto-Type II statistical models
 #' are included (e.g. Zhang-Stephens and MLE estimators,
 #' goodness-of-fit and two-sample tests, confidence intervals
@@ -34,7 +34,7 @@
 #' Fair and objective assessment methods of individual scientists
 #' had become the focus of scientometricians' attention since the
 #' very beginning of their discipline. A quantitative expression
-#' of some publication-citation process
+#' of some publication-citation process'
 #' characteristics is assumed to be a predictor of broadly conceived
 #' scientific competence. It may be used e.g. in building decision support
 #' systems for scientific quality control.
@@ -54,8 +54,8 @@
 #' \cr
 #'
 #' In a broader perspective, this issue is a special case
-#' of the so-called Producer Assessment Problem
-#' (Gagolewski, Grzegorzewski, 2010b).
+#' of the so-called \dfn{Producer Assessment Problem}
+#' (PAP; see Gagolewski, Grzegorzewski, 2010b).
 #'
 #' Consider a \emph{producer} (e.g. a writer, scientist, artist,
 #' craftsman) and a nonempty set of his \emph{products} (e.g. books,
@@ -64,7 +64,7 @@
 #' number in \eqn{I=[a,b]}, where \eqn{a} denotes the lowest admissible
 #' valuation. We typically choose \eqn{I=[0,\infty]} (an interval
 #' in the extended real line).
-#' Some instances of such situation are listed below.
+#' Some instances of the PAP are listed below.
 #'
 #' \tabular{cllll}{
 #'   \tab \strong{Producer}    \tab \strong{Products}   \tab \strong{Rating method} \tab \strong{Discipline}\cr
@@ -75,19 +75,17 @@
 #' E \tab Billboard company    \tab Advertisements      \tab Sale results           \tab Marketing\cr
 #' }
 #'
-#' Each possible state of producer's activity can be described by a point in
-#' \eqn{I^n} for some arbitrary \eqn{n}.
-#' The \dfn{Producer Assessment Problem} (PAP) involves constructing
-#' and analyzing --- both theoretically and empirically ---
-#' aggregation operators (see Grabisch et al, 2009) which can be used for rating
-#' producers. A family of such functions should take into account the two
-#' following aspects of producer's quality:
+#' Each possible state of producer's activity can therefore be represented by a point
+#' \egn{x\in I^n} for some \eqn{n}. Our aim is thus to construct
+#' and analyze --- both theoretically and empirically ---
+#' aggregation operators (cf. Grabisch et al, 2009) which can be used for rating
+#' producers. A family of such functions should take  the two
+#' following aspects of producer's quality into account:
 #' \itemize{
 #'     \item the ability to make highly-rated products,
-#'     \item overall productivity.
+#'     \item overall productivity, \eqn{n}.
 #' }
-#' For some more formal considerations see e.g.
-#' (Gagolewski, Grzegorzewski, 2011).
+#' For some more formal considerations please refer to (Gagolewski, Grzegorzewski, 2011).
 #' \cr\cr
 #'
 #'
@@ -103,7 +101,7 @@
 #' \item Hirsch's \eqn{h}-index (Hirsch, 2005; see \code{\link{index.h}}),
 #' \item Egghe's \eqn{g}-index (Egghe, 2006; see \code{\link{index.g}}),
 #' \item the \eqn{r_p} and \eqn{l_p} indices
-#'       (Gagolewski, Grzegorzewski, 2009a, 2009b;
+#'       (Gagolewski, Grzegorzewski, 2009; Gagolewski, Debski, Nowakiewicz, 2009;
 #'       see \code{\link{index.rp}} and \code{\link{index.lp}}), which
 #'       generalize the \eqn{h}-index, the \eqn{w}-index (Woeginger, 2008), and
 #'       the MAXPROX-index (Kosmulski, 2007),
@@ -220,7 +218,7 @@
 #' to include some new bibliometric impact indices) to the author
 #' (see also \url{http://www.ibspan.waw.pl/~gagolews}).
 #'
-#' For a complete list of functions, use \code{library(help="CITAN")}.
+#' For a complete list of functions, call \code{library(help="CITAN")}.
 #' \cr\cr
 #'
 #' \bold{Keywords}: Hirsch's h-index, Egghe's g-index, L-statistics,
@@ -236,42 +234,45 @@
 #' CITAN homepage, \url{http://www.ibspan.waw.pl/~gagolews/CITAN/}\cr
 #' GTK+ Project, \url{http://www.gtk.org/download.html}\cr
 #' SQLite DBMS, \url{http://www.sqlite.org/}\cr
-#' Dubois D., Prade H., Testemale C., Weighted fuzzy pattern matching,
-#'    Fuzzy Sets and Systems 28, s. 313-331, 1988.\cr
-#' Egghe L., Theory and practise of the g-index, Scientometrics 69(1),
-#'    131-152, 2006.\cr
-#' Gagolewski M., Bibliometric Impact Assessment with R and the CITAN Package,
-#' Journal of Informetrics, 2011, doi:10.1016/j.joi.2011.06.006.\cr
-#' Gagolewski M., Grzegorzewski P., Possibilistic analysis of arity-monotonic
+#' Dubois D., Prade H., Testemale C. (1988). Weighted fuzzy pattern matching,
+#'    Fuzzy Sets and Systems 28, s. 313-331.\cr
+#' Egghe L. (2006). Theory and practise of the g-index, Scientometrics 69(1),
+#'    131-152.\cr
+#' Gagolewski M., Grzegorzewski P. (in-press). Possibilistic analysis of arity-monotonic
 #'    aggregation operators and its relation to bibliometric impact assessment
-#'    of individuals, International Journal of Approximate Reasoning, 2011,
+#'    of individuals, International Journal of Approximate Reasoning,
 #'    doi:10.1016/j.ijar.2011.01.010.\cr
-#' Gagolewski M., Grzegorzewski P., A geometric approach to the construction of
-#'    scientific impact indices, Scientometrics 81(3), 2009a, 617-634.\cr
-#' Gagolewski M., Debski M., Nowakiewicz M., Efficient algorithms for computing
+#' Gagolewski M., Grzegorzewski P. (2009). A geometric approach to the construction of
+#'    scientific impact indices, Scientometrics 81(3), 617-634.\cr
+#' Gagolewski M., Debski M., Nowakiewicz M. (2009). Efficient algorithms for computing
 #'    ''geometric'' scientific impact indices, Research Report of Systems
-#'    Research Institute, Polish Academy of Sciences RB/1/2009, 2009b.\cr
-#' Gagolewski M., Grzegorzewski P., S-statistics and their basic properties,
+#'    Research Institute, Polish Academy of Sciences RB/1/2009.\cr
+#' Gagolewski M., Grzegorzewski P. (2010a). S-statistics and their basic properties,
 #'    In: Borgelt C. et al (Eds.), Combining Soft Computing and Statistical
-#'    Methods in Data Analysis, Springer-Verlag, 2010a, 281-288.\cr
-#' Gagolewski M., Grzegorzewski P., Arity-monotonic extended aggregation
+#'    Methods in Data Analysis, Springer-Verlag, 281-288.\cr
+#' Gagolewski M., Grzegorzewski P. (2010b). Arity-monotonic extended aggregation
 #'    operators, In: Hullermeier E., Kruse R., Hoffmann F. (Eds.),
 #'    Information Processing and Management of Uncertainty in Knowledge-Based
-#'    Systems, CCIS 80, Springer-Verlag, 2010b, 693-702.\cr
-#' Grabisch M., Pap E., Marichal J.-L., Mesiar R.. Aggregation functions,
-#'    Cambridge, 2009.\cr
-#' Hirsch J.E., An index to quantify individual's scientific research output,
+#'    Systems, CCIS 80, Springer-Verlag, 693-702.\cr
+#' Gagolewski M. (2011). Bibliometric Impact Assessment with R and the CITAN Package,
+#' Journal of Informetrics 5(4), 678-692.\cr
+#' Gągolewski M., Grzegorzewski P. (2011). Axiomatic Characterizations of (quasi-)
+#' L-statistics and S-statistics and the Producer Assessment Problem,
+#; In: Galichet S., Montero J., Mauris G. (Eds.), Proc. 7th conf. European Society
+#' for Fuzzy Logic and Technology (EUSFLAT/LFA 2011), Atlantic Press, 53-58.
+#' Grabisch M., Pap E., Marichal J.-L., Mesiar R. (2009). Aggregation functions,
+#'    Cambridge.\cr
+#' Hirsch J.E. (2005). An index to quantify individual's scientific research output,
 #'    Proceedings of the National Academy of Sciences 102(46),
-#'    16569-16572, 2005.\cr
-#' Kosmulski M., MAXPROD - A new index for assessment of the scientific output
-#'    of an individual, and a comparison with the h-index, Cybermetrics 11(1),
-#'    2007.\cr
-#' Lawrence M., Lang D.T., RGtk2: A graphical user interface toolkit for R,
-#'    Journal of Statistical Software 37(8), 1-52, 2010.\cr
-#' Woeginger G.J., An axiomatic characterization of the Hirsch-index,
-#'    Mathematical Social Sciences 56(2), 224-232, 2008.\cr
-#' Zhang J., Stevens M.A., A New and Efficient Estimation Method for the
-#'    Generalized Pareto Distribution, Technometrics 51(3), 2009, 316-325.\cr
+#'    16569-16572.\cr
+#' Kosmulski M. (2007). MAXPROD - A new index for assessment of the scientific output
+#'    of an individual, and a comparison with the h-index, Cybermetrics 11(1).\cr
+#' Lawrence M., Lang D.T. (2010). RGtk2: A graphical user interface toolkit for R,
+#'    Journal of Statistical Software 37(8), 1-52.\cr
+#' Woeginger G.J. (2008). An axiomatic characterization of the Hirsch-index,
+#'    Mathematical Social Sciences 56(2), 224-232.\cr
+#' Zhang J., Stevens M.A. (2009). A New and Efficient Estimation Method for the
+#'    Generalized Pareto Distribution, Technometrics 51(3), 316-325.\cr
 NA
 
 
