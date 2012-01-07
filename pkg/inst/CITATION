@@ -5,14 +5,12 @@ citEntry(entry = "Article",
   author       = personList(as.person("Marek Gagolewski")),
   journal      = "Journal of Informetrics",
   year         = "2011",
-#  volume       = "37",
-#  number       = "8",
-#  pages        = "1--52",
+  volume       = "5",
+  number       = "4",
+  pages        = "678--692",
   url          = "http://www.ibspan.waw.pl/~gagolews/CITAN/",
-  doi          = "10.1016/j.joi.2011.06.006",
-
   textVersion  =
-  paste("Marek Gagolewski (2011).",
+  paste("Gagolewski, M. (2011).",
         "Bibliometric impact assessment with R and the CITAN package.",
-        "Journal of Informetrics. In press, doi:10.1016/j.joi.2011.06.006.")
+        "Journal of Informetrics 5(4), pp. 678--692.")
 )

@@ -82,7 +82,7 @@ NA
 #' \code{Citations} \tab	Number of citations; numeric.\cr
 #' \code{DocumentType} \tab	Type of the document; see above.\cr
 #' }
-#' Such an object may be imported to a local bibliometric storage with \code{\link{lbsImportDocuments}}.
+#' Such an object may be imported into a local bibliometric storage via \code{\link{lbsImportDocuments}}.
 #' @examples
 #' \dontrun{
 #' conn <- lbsConnect("Bibliometrics.db");

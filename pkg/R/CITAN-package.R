@@ -69,14 +69,14 @@
 #' \tabular{cllll}{
 #'   \tab \strong{Producer}    \tab \strong{Products}   \tab \strong{Rating method} \tab \strong{Discipline}\cr
 #' A \tab Scientist            \tab Scientific articles \tab Number of citations    \tab Scientometrics\cr
-#' B \tab Scientific institute \tab Scientists          \tab The \eqn{h}-index      \tab Scientometrics\cr
+#' B \tab Scientific institute \tab Scientists          \tab The h-index            \tab Scientometrics\cr
 #' C \tab Web server           \tab Web pages           \tab Number of in-links     \tab Webometrics\cr
 #' D \tab Artist               \tab Paintings           \tab Auction price          \tab Auctions\cr
 #' E \tab Billboard company    \tab Advertisements      \tab Sale results           \tab Marketing\cr
 #' }
 #'
 #' Each possible state of producer's activity can therefore be represented by a point
-#' \egn{x\in I^n} for some \eqn{n}. Our aim is thus to construct
+#' \eqn{x\in I^n} for some \eqn{n}. Our aim is thus to construct
 #' and analyze --- both theoretically and empirically ---
 #' aggregation operators (cf. Grabisch et al, 2009) which can be used for rating
 #' producers. A family of such functions should take  the two
