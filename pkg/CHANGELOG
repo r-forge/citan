@@ -5,7 +5,9 @@ CITAN PACKAGE CHANGELOG
 
 *******************************************************************************
 
-2011.10-1 /under development/
+2012.01-1 /under development/
+   * Scopus_ReadCSV() - rewritten, allows other formats than only 40 column CSVs.
+   * lbsImportDocuments() - rewritten, Sources are identified by Title, not ISSN.
    * ...
 
 

@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski
+## Copyright 2011-2012 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
@@ -25,11 +25,11 @@ NA
 #' /internal/
 .lbsCreateTable <- function(conn, tablename, query, verbose)
 {
-	if (verbose) cat(sprintf("Creating table '%s'... ", tablename));
-	
-	dbExecQuery(conn, query, FALSE);
+   if (verbose) cat(sprintf("Creating table '%s'... ", tablename));
 
-	if (verbose) cat("DONE.\n");
+   dbExecQuery(conn, query, FALSE);
+
+   if (verbose) cat("DONE.\n");
 }
 
 
@@ -37,11 +37,22 @@ NA
 #' /internal/
 .lbsCreateView <- function(conn, viewname, query, verbose)
 {
-	if (verbose) cat(sprintf("Creating view '%s'... ", viewname));
-	
-	dbExecQuery(conn, query, FALSE);
+   if (verbose) cat(sprintf("Creating view '%s'... ", viewname));
 
-	if (verbose) cat("DONE.\n");
+   dbExecQuery(conn, query, FALSE);
+
+   if (verbose) cat("DONE.\n");
+}
+
+
+#' /internal/
+.lbsCreateIndex <- function(conn, indexname, query, verbose)
+{
+   if (verbose) cat(sprintf("Creating index for '%s'... ", indexname));
+
+   dbExecQuery(conn, query, FALSE);
+
+   if (verbose) cat("DONE.\n");
 }
 
 
@@ -226,181 +237,187 @@ NA
 #' @export
 lbsCreate <- function(conn, verbose=TRUE)
 {
-	CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
+   CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
 
 
-	tablesviews <- dbListTables(conn);
-	if (any(substr(tablesviews, 1, 7) == "Biblio_"))
-		stop("database is not empty");
-	if (any(substr(tablesviews, 1, 11) == "ViewBiblio_"))
-		stop("database is not empty");
+   tablesviews <- dbListTables(conn);
+   if (any(substr(tablesviews, 1, 7) == "Biblio_"))
+      stop("database is not empty");
+   if (any(substr(tablesviews, 1, 11) == "ViewBiblio_"))
+      stop("database is not empty");
 
 
-	# -------------------------------------------------------------------
+   # -------------------------------------------------------------------
 
-	query <- "CREATE TABLE Biblio_Categories (
-		IdCategory       INTEGER PRIMARY KEY ASC,
-		IdCategoryGroup  INTEGER NOT NULL,
-		Description      VARCHAR(63) NOT NULL,
-		FOREIGN KEY(IdCategoryGroup) REFERENCES Biblio_Categories(IdCategory)
-	);"
+   query <- "CREATE TABLE Biblio_Categories (
+      IdCategory       INTEGER PRIMARY KEY ASC,
+      IdCategoryGroup  INTEGER NOT NULL,
+      Description      VARCHAR(63) NOT NULL,
+      FOREIGN KEY(IdCategoryGroup) REFERENCES Biblio_Categories(IdCategory)
+   );"
 
-	.lbsCreateTable(conn, "Biblio_Categories", query, verbose);
-
-
-
-	query <- "CREATE TABLE Biblio_Countries (
-		IdCountry    INTEGER PRIMARY KEY,
-		Name         VARCHAR(63) NOT NULL UNIQUE
-	);"
-
-	.lbsCreateTable(conn, "Biblio_Countries", query, verbose);
+   .lbsCreateTable(conn, "Biblio_Categories", query, verbose);
 
 
 
-	query <- "CREATE TABLE Biblio_Sources (
-		IdSource      INTEGER PRIMARY KEY AUTOINCREMENT,
-		Title         VARCHAR(255) NOT NULL,
-		ISSN_Print    CHAR(8) UNIQUE CHECK (length(ISSN_Print)=8 OR length(ISSN_Print) IS NULL),
-		ISSN_E        CHAR(8) UNIQUE CHECK (length(ISSN_E)=8 OR length(ISSN_E) IS NULL),
-		IsActive      BOOLEAN,
-		IsOpenAccess  BOOLEAN,
-		Type          CHAR(2) CHECK (Type IN ('bs', 'cp', 'jo')),
-		IdCountry     INTEGER,
-		Impact        REAL,
-		FOREIGN KEY(IdCountry) REFERENCES Biblio_Countries(IdCountry)
-	);"
+   query <- "CREATE TABLE Biblio_Countries (
+      IdCountry    INTEGER PRIMARY KEY,
+      Name         VARCHAR(63) NOT NULL UNIQUE
+   );"
 
-	.lbsCreateTable(conn, "Biblio_Sources", query, verbose);
+   .lbsCreateTable(conn, "Biblio_Countries", query, verbose);
 
 
 
-	query <- "CREATE TABLE Biblio_SourcesCategories (
-		IdSource          INTEGER NOT NULL,
-		IdCategory        INTEGER NOT NULL,
-		PRIMARY KEY(IdSource, IdCategory),
-		FOREIGN KEY(IdSource)     REFERENCES Biblio_Sources(IdSource),
-		FOREIGN KEY(IdCategory)   REFERENCES Biblio_Categories(IdCategory)
-	);"
+   query <- "CREATE TABLE Biblio_Sources (
+      IdSource      INTEGER PRIMARY KEY AUTOINCREMENT,
+      Title         VARCHAR(255) NOT NULL,
+      ISSN_Print    CHAR(8) UNIQUE CHECK (length(ISSN_Print)=8 OR length(ISSN_Print) IS NULL),
+      ISSN_E        CHAR(8) UNIQUE CHECK (length(ISSN_E)=8 OR length(ISSN_E) IS NULL),
+      IsActive      BOOLEAN,
+      IsOpenAccess  BOOLEAN,
+      Type          CHAR(2) CHECK (Type IN ('bs', 'cp', 'jo')),
+      IdCountry     INTEGER,
+      Impact        REAL,
+      FOREIGN KEY(IdCountry) REFERENCES Biblio_Countries(IdCountry)
+   );"
 
-	.lbsCreateTable(conn, "Biblio_SourcesCategories", query, verbose);
+   .lbsCreateTable(conn, "Biblio_Sources", query, verbose);
 
+   
 
+   query <- "CREATE INDEX IF NOT EXISTS Biblio_Sources_Title ON Biblio_Sources (Title ASC);";
 
-
-	query <- "CREATE TABLE Biblio_Surveys (
-		IdSurvey     INTEGER PRIMARY KEY AUTOINCREMENT,
-		Description  VARCHAR(63) NOT NULL,
-		FileName     VARCHAR(63),
-		Timestamp    DATETIME
-	);"
-
-	.lbsCreateTable(conn, "Biblio_Surveys", query, verbose);
-	
-	
-	
-	query <- "CREATE TABLE Biblio_Languages (
-		IdLanguage      INTEGER PRIMARY KEY AUTOINCREMENT,
-		Name            VARCHAR(63) NOT NULL UNIQUE
-	);"
-
-	.lbsCreateTable(conn, "Biblio_Languages", query, verbose);
+   .lbsCreateIndex(conn, "Biblio_Sources", query, verbose);
 
 
-	query <- "CREATE TABLE Biblio_Documents (
-		IdDocument     INTEGER      PRIMARY KEY AUTOINCREMENT,
-		IdSource       INTEGER,
-		IdLanguage     INTEGER,
-		UniqueId       VARCHAR(31)  UNIQUE NOT NULL,
-		Title          VARCHAR(255) NOT NULL,
-		BibEntry       VARCHAR(511) NOT NULL,
-		Year           INTEGER,
-		Pages          INTEGER,
-		Citations      INTEGER       NOT NULL,
-		Type           CHAR(2) CHECK (Type IN ('ar', 'ip', 'bk', 'cp', 'ed', 'er', 'le', 'no', 'rp', 're', 'sh')),
-		FOREIGN KEY(IdSource)   REFERENCES Biblio_Sources(IdSource),
-		FOREIGN KEY(IdLanguage) REFERENCES Biblio_Languages(IdLanguage)
-	);"
 
-	.lbsCreateTable(conn, "Biblio_Documents", query, verbose);
+   query <- "CREATE TABLE Biblio_SourcesCategories (
+      IdSource          INTEGER NOT NULL,
+      IdCategory        INTEGER NOT NULL,
+      PRIMARY KEY(IdSource, IdCategory),
+      FOREIGN KEY(IdSource)     REFERENCES Biblio_Sources(IdSource),
+      FOREIGN KEY(IdCategory)   REFERENCES Biblio_Categories(IdCategory)
+   );"
+
+   .lbsCreateTable(conn, "Biblio_SourcesCategories", query, verbose);
 
 
 
 
-	query <- "CREATE TABLE Biblio_DocumentsSurveys (
-		IdDocument     INTEGER NOT NULL,
-		IdSurvey       INTEGER NOT NULL,
-		PRIMARY KEY(IdDocument, IdSurvey),
-		FOREIGN KEY(IdSurvey)   REFERENCES Biblio_Surveys(IdSurvey),
-		FOREIGN KEY(IdDocument) REFERENCES Biblio_Documents(IdDocument)
-	);"
+   query <- "CREATE TABLE Biblio_Surveys (
+      IdSurvey     INTEGER PRIMARY KEY AUTOINCREMENT,
+      Description  VARCHAR(63) NOT NULL,
+      FileName     VARCHAR(63),
+      Timestamp    DATETIME
+   );"
 
-	.lbsCreateTable(conn, "Biblio_DocumentsSurveys", query, verbose);
-
+   .lbsCreateTable(conn, "Biblio_Surveys", query, verbose);
 
 
 
-	query <- "CREATE TABLE Biblio_Authors (
-		IdAuthor     INTEGER PRIMARY KEY AUTOINCREMENT,
-		Name         VARCHAR(63) NOT NULL UNIQUE
-	);"
+   query <- "CREATE TABLE Biblio_Languages (
+      IdLanguage      INTEGER PRIMARY KEY AUTOINCREMENT,
+      Name            VARCHAR(63) NOT NULL UNIQUE
+   );"
 
-	.lbsCreateTable(conn, "Biblio_Authors", query, verbose);
-
-
+   .lbsCreateTable(conn, "Biblio_Languages", query, verbose);
 
 
-	query <- "CREATE TABLE Biblio_AuthorsDocuments (
-		IdAuthor     INTEGER NOT NULL,
-		IdDocument   INTEGER NOT NULL,
-		PRIMARY KEY(IdAuthor, IdDocument),
-		FOREIGN KEY(IdAuthor)   REFERENCES Biblio_Authors(IdAuthor),
-		FOREIGN KEY(IdDocument) REFERENCES Biblio_Documents(IdDocument)
-	);"
+   query <- "CREATE TABLE Biblio_Documents (
+      IdDocument     INTEGER      PRIMARY KEY AUTOINCREMENT,
+      IdSource       INTEGER,
+      IdLanguage     INTEGER,
+      UniqueId       VARCHAR(31)  UNIQUE NOT NULL,
+      Title          VARCHAR(255) NOT NULL,
+      BibEntry       VARCHAR(511) NOT NULL,
+      Year           INTEGER,
+      Pages          INTEGER,
+      Citations      INTEGER       NOT NULL,
+      Type           CHAR(2) CHECK (Type IN ('ar', 'ip', 'bk', 'cp', 'ed', 'er', 'le', 'no', 'rp', 're', 'sh')),
+      FOREIGN KEY(IdSource)   REFERENCES Biblio_Sources(IdSource),
+      FOREIGN KEY(IdLanguage) REFERENCES Biblio_Languages(IdLanguage)
+   );"
 
-	.lbsCreateTable(conn, "Biblio_AuthorsDocuments", query, verbose);
-	
-	
-	
-	query <- "CREATE VIEW ViewBiblio_DocumentsSurveys AS
-		SELECT
-			Biblio_DocumentsSurveys.IdDocument AS IdDocument,
-			Biblio_DocumentsSurveys.IdSurvey AS IdSurvey,
-			Biblio_Surveys.Description AS Description,
-			Biblio_Surveys.Filename AS Filename,
-			Biblio_Surveys.Timestamp AS Timestamp
-		FROM Biblio_DocumentsSurveys
-		JOIN Biblio_Surveys ON Biblio_DocumentsSurveys.IdSurvey=Biblio_Surveys.IdSurvey;";
-
-	.lbsCreateView(conn, "ViewBiblio_DocumentsSurveys", query, verbose);
-	
-	
-	query <- "CREATE VIEW ViewBiblio_DocumentsCategories AS
-		SELECT
-			IdDocument AS IdDocument,
-			DocSrcCat.IdCategory AS IdCategory,
-			DocSrcCat.Description AS Description,
-			DocSrcCat.IdCategoryGroup AS IdCategoryGroup,
-			Biblio_Categories.Description AS DescriptionGroup
-		FROM
-		(
-			SELECT
-				Biblio_Documents.IdDocument AS IdDocument,
-				Biblio_SourcesCategories.IdCategory AS IdCategory,
-				Biblio_Categories.Description AS Description,
-				Biblio_Categories.IdCategoryGroup AS IdCategoryGroup
-			FROM Biblio_Documents
-			JOIN Biblio_SourcesCategories ON Biblio_Documents.IdSource=Biblio_SourcesCategories.IdSource
-			JOIN Biblio_Categories ON Biblio_SourcesCategories.IdCategory=Biblio_Categories.IdCategory
-		) AS DocSrcCat
-		JOIN Biblio_Categories ON DocSrcCat.IdCategoryGroup=Biblio_Categories.IdCategory;";
-
-	.lbsCreateView(conn, "ViewBiblio_DocumentsCategories", query, verbose);
-
-	# -------------------------------------------------------------------
+   .lbsCreateTable(conn, "Biblio_Documents", query, verbose);
 
 
-	return(TRUE);
+
+
+   query <- "CREATE TABLE Biblio_DocumentsSurveys (
+      IdDocument     INTEGER NOT NULL,
+      IdSurvey       INTEGER NOT NULL,
+      PRIMARY KEY(IdDocument, IdSurvey),
+      FOREIGN KEY(IdSurvey)   REFERENCES Biblio_Surveys(IdSurvey),
+      FOREIGN KEY(IdDocument) REFERENCES Biblio_Documents(IdDocument)
+   );"
+
+   .lbsCreateTable(conn, "Biblio_DocumentsSurveys", query, verbose);
+
+
+
+
+   query <- "CREATE TABLE Biblio_Authors (
+      IdAuthor     INTEGER PRIMARY KEY AUTOINCREMENT,
+      Name         VARCHAR(63) NOT NULL UNIQUE
+   );"
+
+   .lbsCreateTable(conn, "Biblio_Authors", query, verbose);
+
+
+
+
+   query <- "CREATE TABLE Biblio_AuthorsDocuments (
+      IdAuthor     INTEGER NOT NULL,
+      IdDocument   INTEGER NOT NULL,
+      PRIMARY KEY(IdAuthor, IdDocument),
+      FOREIGN KEY(IdAuthor)   REFERENCES Biblio_Authors(IdAuthor),
+      FOREIGN KEY(IdDocument) REFERENCES Biblio_Documents(IdDocument)
+   );"
+
+   .lbsCreateTable(conn, "Biblio_AuthorsDocuments", query, verbose);
+
+
+
+   query <- "CREATE VIEW ViewBiblio_DocumentsSurveys AS
+      SELECT
+         Biblio_DocumentsSurveys.IdDocument AS IdDocument,
+         Biblio_DocumentsSurveys.IdSurvey AS IdSurvey,
+         Biblio_Surveys.Description AS Description,
+         Biblio_Surveys.Filename AS Filename,
+         Biblio_Surveys.Timestamp AS Timestamp
+      FROM Biblio_DocumentsSurveys
+      JOIN Biblio_Surveys ON Biblio_DocumentsSurveys.IdSurvey=Biblio_Surveys.IdSurvey;";
+
+   .lbsCreateView(conn, "ViewBiblio_DocumentsSurveys", query, verbose);
+
+
+   query <- "CREATE VIEW ViewBiblio_DocumentsCategories AS
+      SELECT
+         IdDocument AS IdDocument,
+         DocSrcCat.IdCategory AS IdCategory,
+         DocSrcCat.Description AS Description,
+         DocSrcCat.IdCategoryGroup AS IdCategoryGroup,
+         Biblio_Categories.Description AS DescriptionGroup
+      FROM
+      (
+         SELECT
+            Biblio_Documents.IdDocument AS IdDocument,
+            Biblio_SourcesCategories.IdCategory AS IdCategory,
+            Biblio_Categories.Description AS Description,
+            Biblio_Categories.IdCategoryGroup AS IdCategoryGroup
+         FROM Biblio_Documents
+         JOIN Biblio_SourcesCategories ON Biblio_Documents.IdSource=Biblio_SourcesCategories.IdSource
+         JOIN Biblio_Categories ON Biblio_SourcesCategories.IdCategory=Biblio_Categories.IdCategory
+      ) AS DocSrcCat
+      JOIN Biblio_Categories ON DocSrcCat.IdCategoryGroup=Biblio_Categories.IdCategory;";
+
+   .lbsCreateView(conn, "ViewBiblio_DocumentsCategories", query, verbose);
+
+   # -------------------------------------------------------------------
+
+
+   return(TRUE);
 }
 
 

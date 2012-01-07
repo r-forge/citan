@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski
+## Copyright 2011-2012 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 
 #' \pkg{CITAN} is a library of functions useful in --- but not limited to ---
 #' quantitative research in the field of scientometrics.
-#' It contains various tools for preprocessing 
-#' bibliographic data retrieved e.g. from Elsevier's \emph{SciVerse Scopus} and
+#' It contains various tools for preprocessing
+#' bibliographic data retrieved from e.g. Elsevier's \emph{SciVerse Scopus} and
 #' calculating bibliometric impact of individuals.
 #' Also, some functions dealing with Pareto-Type II (GPD)
 #' and Discretized Pareto-Type II statistical models
@@ -29,7 +29,7 @@
 #' for the theoretical Hirsch index etc.).
 #' They may be used to describe and analyze many phenomena encountered
 #' in the social sciences.
-#' 
+#'
 #'
 #' Fair and objective assessment methods of individual scientists
 #' had become the focus of scientometricians' attention since the
@@ -113,12 +113,12 @@
 #'
 #' \strong{(2)}
 #' To \bold{preprocess and analyze bibliometric data} (cf. Gagolewski, 2011) retrieved
-#' e.g. from Elsevier's \emph{SciVerse Scopus}
+#' from e.g.  Elsevier's \emph{SciVerse Scopus}
 #' we need the \pkg{RSQLite} package. It is an interface to the free
 #' SQLite DataBase Management System (see \url{http://www.sqlite.org/}).
 #' All data is stored in a so-called Local Bibliometric Storage (\acronym{LBS}),
 #' created with the \code{\link{lbsCreate}} function.
-#' 
+#'
 #' The data frames \code{\link{Scopus_ASJC}} and \code{\link{Scopus_SourceList}}
 #' contain various information on current source coverage of SciVerse Scopus.
 #' They may be needed during the creation of the LBS and \code{\link{lbsCreate}}
@@ -128,12 +128,12 @@
 #'       (information from Elsevier).}
 #'
 #' \pkg{CITAN} is able to import publication data from Scopus CSV files
-#' (saved with settings "Output: complete format",
+#' (saved with settings "Output: complete format" or "Output: Citations only",
 #' see \code{\link{Scopus_ReadCSV}}). Note that the output limit in Scopus
 #' is 2000 entries per file. Therefore, to perform
 #' bibliometric research we often need to divide the query results
 #' into many parts. \pkg{CITAN} is able to merge them back even if
-#' records are repeating.
+#' records are repeated.
 #'
 #' The data may be accessed via functions from the \pkg{DBI} interface.
 #' However, some typical tasks may be automated using
@@ -223,7 +223,8 @@
 #'
 #' \bold{Keywords}: Hirsch's h-index, Egghe's g-index, L-statistics,
 #' S-statistics, bibliometrics, scientometrics, informetrics,
-#' webometrics, aggregation operators, impact functions, impact assessment.
+#' webometrics, aggregation operators, arity-monotonicity,
+#' impact functions, impact assessment.
 #'
 #' @name CITAN-package
 #' @aliases CITAN
@@ -238,10 +239,6 @@
 #'    Fuzzy Sets and Systems 28, s. 313-331.\cr
 #' Egghe L. (2006). Theory and practise of the g-index, Scientometrics 69(1),
 #'    131-152.\cr
-#' Gagolewski M., Grzegorzewski P. (in-press). Possibilistic analysis of arity-monotonic
-#'    aggregation operators and its relation to bibliometric impact assessment
-#'    of individuals, International Journal of Approximate Reasoning,
-#'    doi:10.1016/j.ijar.2011.01.010.\cr
 #' Gagolewski M., Grzegorzewski P. (2009). A geometric approach to the construction of
 #'    scientific impact indices, Scientometrics 81(3), 617-634.\cr
 #' Gagolewski M., Debski M., Nowakiewicz M. (2009). Efficient algorithms for computing
@@ -256,12 +253,15 @@
 #'    Systems, CCIS 80, Springer-Verlag, 693-702.\cr
 #' Gagolewski M. (2011). Bibliometric Impact Assessment with R and the CITAN Package,
 #' Journal of Informetrics 5(4), 678-692.\cr
-#' Gągolewski M., Grzegorzewski P. (2011). Axiomatic Characterizations of (quasi-)
+#' Gagolewski M., Grzegorzewski P. (2011a). Axiomatic Characterizations of (quasi-)
 #' L-statistics and S-statistics and the Producer Assessment Problem,
 #; In: Galichet S., Montero J., Mauris G. (Eds.), Proc. 7th conf. European Society
 #' for Fuzzy Logic and Technology (EUSFLAT/LFA 2011), Atlantic Press, 53-58.
 #' Grabisch M., Pap E., Marichal J.-L., Mesiar R. (2009). Aggregation functions,
 #'    Cambridge.\cr
+#' Gagolewski M., Grzegorzewski P. (2011b). Possibilistic analysis of arity-monotonic
+#'    aggregation operators and its relation to bibliometric impact assessment
+#'    of individuals, International Journal of Approximate Reasoning 52(9), 1312-1324.\cr
 #' Hirsch J.E. (2005). An index to quantify individual's scientific research output,
 #'    Proceedings of the National Academy of Sciences 102(46),
 #'    16569-16572.\cr
@@ -279,6 +279,6 @@ NA
 
 .onLoad <- function(lib, pkg)
 {
-	library.dynam("CITAN", pkg, lib)
-# 	cat("CITAN loaded. Send any comments to <gagolews@ibspan.waw.pl>.\n")
+   library.dynam("CITAN", pkg, lib);
+   cat("CITAN loaded. Please end any comments to <gagolews@ibspan.waw.pl>.\n");
 }
