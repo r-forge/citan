@@ -272,7 +272,7 @@ NA
 lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    originalFilename=attr(data, "filename"),
    excludeRows=NULL,  updateDocumentIfExists=TRUE,
-   warnSourceTitle=FALSE, warnExactDuplicates=FALSE, verbose=TRUE)
+   warnSourceTitle=TRUE, warnExactDuplicates=FALSE, verbose=TRUE)
 {
    CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
 
@@ -283,10 +283,14 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    if (class(data) != "data.frame")
       stop("'data' is not a data.frame.");
 
-   if (ncol(data) != 11 || any(names(data) != c("Authors", "Title", "Year", "SourceTitle", "Volume",
-         "Issue", "PageStart", "PageEnd", "Citations", "UniqueId", "DocumentType")))
+   if (ncol(data) != 11 || is.null(data$Authors) || is.null(data$Title)
+      || is.null(data$Year) || is.null(data$SourceTitle) || is.null(data$Volume)
+      || is.null(data$Issue) || is.null(data$PageStart) || is.null(data$PageEnd)
+      || is.null(data$Citations) || is.null(data$UniqueId)
+      || is.null(data$DocumentType))
       stop("incorrect format of 'data'.");
 
+   data$Authors <- as.character(data$Authors);
    if (class(data$PageStart)!="numeric")       stop("column 'PageStart' in 'data' should be 'numeric'.");
    if (class(data$PageEnd)!="numeric")         stop("column 'PageEnd' in 'data' should be 'numeric'.");
    if (class(data$Citations)!="numeric")       stop("column 'Citations' in 'data' should be 'numeric'.");
