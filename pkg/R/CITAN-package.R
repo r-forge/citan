@@ -280,5 +280,5 @@ NA
 .onLoad <- function(lib, pkg)
 {
    library.dynam("CITAN", pkg, lib);
-   cat("CITAN loaded. Please end any comments to <gagolews@ibspan.waw.pl>.\n");
+   packageStartupMessage("CITAN loaded. For more information please visit http://www.ibspan.waw.pl/~gagolews/CITAN/.");
 }

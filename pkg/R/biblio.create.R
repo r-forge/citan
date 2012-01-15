@@ -21,64 +21,22 @@
 NA
 
 
-
-#' /internal/
-.lbsCreateTable <- function(conn, tablename, query, verbose)
-{
-   if (verbose) cat(sprintf("Creating table '%s'... ", tablename));
-
-   dbExecQuery(conn, query, FALSE);
-
-   if (verbose) cat("DONE.\n");
-}
-
-
-
-#' /internal/
-.lbsCreateView <- function(conn, viewname, query, verbose)
-{
-   if (verbose) cat(sprintf("Creating view '%s'... ", viewname));
-
-   dbExecQuery(conn, query, FALSE);
-
-   if (verbose) cat("DONE.\n");
-}
-
-
-#' /internal/
-.lbsCreateIndex <- function(conn, indexname, query, verbose)
-{
-   if (verbose) cat(sprintf("Creating index for '%s'... ", indexname));
-
-   dbExecQuery(conn, query, FALSE);
-
-   if (verbose) cat("DONE.\n");
-}
-
-
-
 #' Creates an empty Local Bibliometric Storage.
 #'
-#' The function may be executed only if the database does not contain any tables
-#' named \code{Biblio_*} or views named \code{ViewBiblio_*}.
+#' The function may be executed only if the database contains no tables
+#' named \code{Biblio_*} and no views named \code{ViewBiblio_*}.
 #'
-#' This function creates database tables using the following SQL code.
+#' The following SQL code is executed.
 #' \preformatted{
 #' CREATE TABLE Biblio_Categories (
 #'      -- Source classification codes (e.g. ASJC)
 #'    IdCategory        INTEGER PRIMARY KEY ASC,
-#'    IdCategoryGroup   INTEGER NOT NULL,
+#'    IdCategoryParent   INTEGER NOT NULL,
 #'    Description       VARCHAR(63) NOT NULL,
-#'    FOREIGN KEY(IdCategoryGroup) REFERENCES Biblio_Categories(IdCategory)
+#'    FOREIGN KEY(IdCategoryParent) REFERENCES Biblio_Categories(IdCategory)
 #' );
 #' }
 #'
-#' \preformatted{
-#' CREATE TABLE Biblio_Countries (
-#'    IdCountry         INTEGER PRIMARY KEY,
-#'    Name              VARCHAR(63) NOT NULL UNIQUE
-#' );
-#' }
 #'
 #' \preformatted{
 #' CREATE TABLE Biblio_Sources (
@@ -237,6 +195,41 @@ NA
 #' @export
 lbsCreate <- function(conn, verbose=TRUE)
 {
+   #' /internal/
+   .lbsCreateTable <- function(conn, tablename, query, verbose)
+   {
+      if (verbose) cat(sprintf("Creating table '%s'... ", tablename));
+
+      dbExecQuery(conn, query, FALSE);
+
+      if (verbose) cat("DONE.\n");
+   }
+
+
+
+   #' /internal/
+   .lbsCreateView <- function(conn, viewname, query, verbose)
+   {
+      if (verbose) cat(sprintf("Creating view '%s'... ", viewname));
+
+      dbExecQuery(conn, query, FALSE);
+
+      if (verbose) cat("DONE.\n");
+   }
+
+
+   #' /internal/
+   .lbsCreateIndex <- function(conn, indexname, query, verbose)
+   {
+      if (verbose) cat(sprintf("Creating index for '%s'... ", indexname));
+
+      dbExecQuery(conn, query, FALSE);
+
+      if (verbose) cat("DONE.\n");
+   }
+
+
+
    CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
 
 
@@ -250,36 +243,29 @@ lbsCreate <- function(conn, verbose=TRUE)
    # -------------------------------------------------------------------
 
    query <- "CREATE TABLE Biblio_Categories (
-      IdCategory       INTEGER PRIMARY KEY ASC,
-      IdCategoryGroup  INTEGER NOT NULL,
-      Description      VARCHAR(63) NOT NULL,
-      FOREIGN KEY(IdCategoryGroup) REFERENCES Biblio_Categories(IdCategory)
+      IdCategory        INTEGER PRIMARY KEY ASC,
+      IdCategoryParent  INTEGER NOT NULL,
+      Description       VARCHAR(63) NOT NULL,
+      FOREIGN KEY(IdCategoryParent) REFERENCES Biblio_Categories(IdCategory)
    );"
 
    .lbsCreateTable(conn, "Biblio_Categories", query, verbose);
 
 
 
-   query <- "CREATE TABLE Biblio_Countries (
-      IdCountry    INTEGER PRIMARY KEY,
-      Name         VARCHAR(63) NOT NULL UNIQUE
-   );"
-
-   .lbsCreateTable(conn, "Biblio_Countries", query, verbose);
-
-
 
    query <- "CREATE TABLE Biblio_Sources (
-      IdSource      INTEGER PRIMARY KEY AUTOINCREMENT,
+      IdSource      UNSIGNED BIG INT PRIMARY KEY AUTOINCREMENT,
       Title         VARCHAR(255) NOT NULL,
-      ISSN_Print    CHAR(8) UNIQUE CHECK (length(ISSN_Print)=8 OR length(ISSN_Print) IS NULL),
-      ISSN_E        CHAR(8) UNIQUE CHECK (length(ISSN_E)=8 OR length(ISSN_E) IS NULL),
       IsActive      BOOLEAN,
       IsOpenAccess  BOOLEAN,
       Type          CHAR(2) CHECK (Type IN ('bs', 'cp', 'jo')),
-      IdCountry     INTEGER,
-      Impact        REAL,
-      FOREIGN KEY(IdCountry) REFERENCES Biblio_Countries(IdCountry)
+      Impact1       REAL,
+      Impact2       REAL,
+      Impact3       REAL,
+      Impact4       REAL,
+      Impact5       REAL,
+      Impact6       REAL
    );"
 
    .lbsCreateTable(conn, "Biblio_Sources", query, verbose);
@@ -293,7 +279,7 @@ lbsCreate <- function(conn, verbose=TRUE)
 
 
    query <- "CREATE TABLE Biblio_SourcesCategories (
-      IdSource          INTEGER NOT NULL,
+      IdSource          UNSIGNED BIG INT NOT NULL,
       IdCategory        INTEGER NOT NULL,
       PRIMARY KEY(IdSource, IdCategory),
       FOREIGN KEY(IdSource)     REFERENCES Biblio_Sources(IdSource),
@@ -305,6 +291,39 @@ lbsCreate <- function(conn, verbose=TRUE)
 
 
 
+
+
+
+
+   query <- "CREATE TABLE Biblio_Documents (
+      IdDocument     UNSIGNED BIG INT      PRIMARY KEY AUTOINCREMENT,
+      IdSource       UNSIGNED BIG INT,
+      AlternativeId  VARCHAR(31)  UNIQUE NOT NULL,
+      Title          VARCHAR(255),
+      BibEntry       TEXT,
+      Year           INTEGER,
+      Pages          INTEGER,
+      Citations      INTEGER NOT NULL,
+      Type           CHAR(2) CHECK (Type IN ('ar', 'ip', 'bk', 'cp', 'ed', 'er', 'le', 'no', 'rp', 're', 'sh')),
+      FOREIGN KEY(IdSource)   REFERENCES Biblio_Sources(IdSource)
+   );"
+
+   .lbsCreateTable(conn, "Biblio_Documents", query, verbose);
+
+   
+
+   query <- "CREATE TABLE Biblio_Citations (
+      IdDocumentParent     UNSIGNED BIG INT NOT NULL,
+      IdDocumentChild      UNSIGNED BIG INT NOT NULL,
+      PRIMARY KEY(IdDocumentParent, IdDocumentChild),
+      FOREIGN KEY(IdDocumentParent) REFERENCES Biblio_Documents(IdDocument),
+      FOREIGN KEY(IdDocumentChild)  REFERENCES Biblio_Documents(IdDocument)
+   );"
+
+   .lbsCreateTable(conn, "Biblio_Citations", query, verbose);   
+
+
+   
    query <- "CREATE TABLE Biblio_Surveys (
       IdSurvey     INTEGER PRIMARY KEY AUTOINCREMENT,
       Description  VARCHAR(63) NOT NULL,
@@ -314,38 +333,8 @@ lbsCreate <- function(conn, verbose=TRUE)
 
    .lbsCreateTable(conn, "Biblio_Surveys", query, verbose);
 
-
-
-   query <- "CREATE TABLE Biblio_Languages (
-      IdLanguage      INTEGER PRIMARY KEY AUTOINCREMENT,
-      Name            VARCHAR(63) NOT NULL UNIQUE
-   );"
-
-   .lbsCreateTable(conn, "Biblio_Languages", query, verbose);
-
-
-   query <- "CREATE TABLE Biblio_Documents (
-      IdDocument     INTEGER      PRIMARY KEY AUTOINCREMENT,
-      IdSource       INTEGER,
-      IdLanguage     INTEGER,
-      UniqueId       VARCHAR(31)  UNIQUE NOT NULL,
-      Title          VARCHAR(255) NOT NULL,
-      BibEntry       VARCHAR(511) NOT NULL,
-      Year           INTEGER,
-      Pages          INTEGER,
-      Citations      INTEGER       NOT NULL,
-      Type           CHAR(2) CHECK (Type IN ('ar', 'ip', 'bk', 'cp', 'ed', 'er', 'le', 'no', 'rp', 're', 'sh')),
-      FOREIGN KEY(IdSource)   REFERENCES Biblio_Sources(IdSource),
-      FOREIGN KEY(IdLanguage) REFERENCES Biblio_Languages(IdLanguage)
-   );"
-
-   .lbsCreateTable(conn, "Biblio_Documents", query, verbose);
-
-
-
-
    query <- "CREATE TABLE Biblio_DocumentsSurveys (
-      IdDocument     INTEGER NOT NULL,
+      IdDocument     UNSIGNED BIG INT NOT NULL,
       IdSurvey       INTEGER NOT NULL,
       PRIMARY KEY(IdDocument, IdSurvey),
       FOREIGN KEY(IdSurvey)   REFERENCES Biblio_Surveys(IdSurvey),
@@ -359,7 +348,8 @@ lbsCreate <- function(conn, verbose=TRUE)
 
    query <- "CREATE TABLE Biblio_Authors (
       IdAuthor     INTEGER PRIMARY KEY AUTOINCREMENT,
-      Name         VARCHAR(63) NOT NULL UNIQUE
+      Name         VARCHAR(63) NOT NULL UNIQUE,
+      AuthorGroup  UNSIGNED BIG INT NOT NULL
    );"
 
    .lbsCreateTable(conn, "Biblio_Authors", query, verbose);
@@ -369,7 +359,7 @@ lbsCreate <- function(conn, verbose=TRUE)
 
    query <- "CREATE TABLE Biblio_AuthorsDocuments (
       IdAuthor     INTEGER NOT NULL,
-      IdDocument   INTEGER NOT NULL,
+      IdDocument   UNSIGNED BIG INT NOT NULL,
       PRIMARY KEY(IdAuthor, IdDocument),
       FOREIGN KEY(IdAuthor)   REFERENCES Biblio_Authors(IdAuthor),
       FOREIGN KEY(IdDocument) REFERENCES Biblio_Documents(IdDocument)

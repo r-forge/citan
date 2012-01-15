@@ -213,11 +213,11 @@ NA
 }
 
 
-#' This function suggests the user some groups of documents that possibly
-#' should be merged.
-#' It is based on documents' titles similarity comparisons.
-#' It uses a heuristic algorithm, which behavior
-#' is controlled by the \code{aggressiveness} parameter.
+#' Indicates groups of documents that possibly should be merged,
+#' basing on similarities between documents' titles.
+#'
+#' The function uses a fuzzy similarity measure of title similarity, which
+#' specificity is controlled by the \code{aggressiveness} parameter.
 #'
 #' The search results are presented in a convenient-to-use graphical dialog box.
 #' The function tries to order the groups of documents according
@@ -463,8 +463,8 @@ lbsFindDuplicateTitles <- function(conn,
 
 
 
-#' This function suggests the user some groups of authors that possibly should be merged.
-#' It bases on authors' names similarity comparisons.
+#' Indicates groups of authors that possibly should be merged,
+#' by comparing similarities between authors' names.
 #'
 #' It uses a heuristic **EXPERIMENTAL** algorithm, which behavior
 #' is controlled by the \code{aggressiveness} parameter.

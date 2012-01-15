@@ -5,10 +5,18 @@ CITAN PACKAGE CHANGELOG
 
 *******************************************************************************
 
-2012.01-1 /under development/
+1.01 /under development/
+   * New versioning scheme (major changes in LBS).
    * Scopus_ReadCSV() - rewritten, allows other formats than only 40 column CSVs.
-   * lbsImportDocuments() - rewritten, Sources are identified by Title, not ISSN.
+   * lbsImportDocuments() - rewritten, Sources are identified by Title
+       (instead of ISSN - not available in `Citations only' export format
+       in Scopus).
+   * lbsCreate() - new RDBS scheme (Biblio_Citations added,
+       Biblio_Languages and Biblio_Countries dropped,
+       allow for nondestructive Author merging - AuthorGroup field)
+   * Updated Scopus_SourceList and Scopus_ASJC (Oct 2011)
    * ...
+   
 
 
 *******************************************************************************

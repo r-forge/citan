@@ -24,11 +24,11 @@ NA
 
 #' List of Elsevier's \emph{SciVerse Scopus} covered titles (journals, conference proceedings, book series, etc.)
 #'
-#' Last update: March 2011. The data file is based on the official and publicly available
-#' (no permission needed-information from Elsevier) Scopus list of covered titles,
+#' Last update: October 2011. The data file is based on the official and publicly available
+#' (no permission needed as stated by Elsevier) Scopus list of covered titles,
 #' see \url{http://www.info.sciverse.com/documents/files/scopus-training/resourcelibrary/xls/title_list.xls}.
 #'
-#' This data frame consists of 30017 records.
+#' This data frame consists of 30794 records.
 #' It has the following columns.
 #' \tabular{ll}{
 #'   \code{Record} \tab Unique source identifier in \emph{SciVerse Scopus} (character string). \cr
@@ -55,7 +55,7 @@ NA
 #'
 #' The \code{data.frame} is sorted by \code{ISSN_Print} and \code{Status} (secondary criterion; \code{Active} sources first).
 #'
-#' @title Scopus list of covered sources
+#' @title Scopus covered source list
 #' @name Scopus_SourceList
 #' @docType data
 #' @seealso \code{\link{Scopus_ASJC}}, \code{\link{Scopus_ReadCSV}}, \code{\link{Scopus_ImportSources}}
@@ -70,15 +70,15 @@ NA
 #' List of Elsevier's \emph{SciVerse Scopus} ASJC (All Science. Journals Classification)
 #' source classification codes.
 #'
-#' Last update: March 2011. The data file is based on the official and publicly available
-#' (no permission needed-information from Elsevier) \emph{SciVerse Scopus} list of covered titles,
+#' Last update: October 2011. The data file is based on the official and publicly available
+#' (no permission needed as stated by Elsevier) Scopus list of covered titles,
 #' see \url{http://www.info.sciverse.com/documents/files/scopus-training/resourcelibrary/xls/title_list.xls}.
 #'
 #' It consists of 334 ASJC 4-digit integer codes (column \code{ASJC})
-#' together with their group identifiers (column \code{ASJC_Group})
+#' together with their group identifiers (column \code{ASJC_Parent})
 #' and descriptions (column \code{Description}).
 #'
-#' It is used to classify journals and other sources (see \code{\link{Scopus_SourceList}}).
+#' ASJC codes are used to classify Scopus sources (see \code{\link{Scopus_SourceList}}).
 #'
 #' @title Scopus ASJC (All Science. Journals Classification) classification codes
 #' @name Scopus_ASJC

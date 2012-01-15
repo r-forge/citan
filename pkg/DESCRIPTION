@@ -7,21 +7,21 @@ LazyData: true
 Title: CITation ANalysis toolpack
 Type: Package
 Author: Marek Gagolewski <gagolews@ibspan.waw.pl>
-Description: CITAN is a library of functions useful in -
-    but not limited to - quantitative research in the field
-    of scientometrics. It contains various tools for
+Description: CITAN package for (among others) quantitative
+    research in scientometrics and bibliometrics.
+    It contains various tools for
     preprocessing bibliographic data retrieved e.g. from
     Elsevier's SciVerse Scopus and calculating bibliometric
-    impact of individuals. Also, some functions dealing
+    impact of individuals. Additionaly, some functions dealing
     with Pareto-Type II (GPD) and Discretized Pareto-Type
     II statistical models are included (e.g. Zhang-Stephens
     and MLE estimators, goodness-of-fit and two-sample
     tests, confidence intervals for the theoretical Hirsch
     index etc.). They may be used to describe and analyze
     many phenomena encountered in the social sciences.
-Version: 2012.01-1
+Version: 1.01
 URL: http://www.ibspan.waw.pl/~gagolews/CITAN/
-Date: 2012-01-07
+Date: 2012-01-15
 Depends:
     R (>= 2.10.0),
     DBI,
