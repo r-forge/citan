@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski
+## Copyright 2011-2012 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
@@ -26,11 +26,11 @@ NA
 
 #' Executes an SQL query and immediately frees all allocated resources.
 #'
-#' This function is useful in executing queries like \code{CREATE TABLE},
+#' This function may be used to execute queries like \code{CREATE TABLE},
 #' \code{UPDATE}, \code{INSERT}, etc.
 #'
-#' It has its own exception handler, which prints out detailed description
-#' of caught error details.
+#' It has its own exception handler, which prints out detailed information
+#' on caught errors.
 #'
 #' @title Execute a query and free its resources
 #' @param conn a \code{DBI} connection object.
@@ -40,23 +40,23 @@ NA
 #' @export
 dbExecQuery <- function(conn, statement, rollbackOnError=FALSE)
 {
-	if (!is.character(statement) || length(statement)!=1)
-		stop("incorrect 'statement'");
+   if (!is.character(statement) || length(statement)!=1)
+      stop("incorrect 'statement'");
 
-	tryCatch(res <- dbSendQuery(conn, statement),
-		error=function(err)
-		{
-			cat("\n\n*** SQL Exception caught ***\n\n");
-			cat(sprintf("Statement: %s\n", statement));
-			
-			ex <- dbGetException(conn);
-			
-			if (rollbackOnError) dbRollback(conn);
-			print(ex);
-			stop("stopping on SQL exception.");
-		}
-	);
+   tryCatch(res <- dbSendQuery(conn, statement),
+      error=function(err)
+      {
+         cat("\n\n*** SQL Exception caught ***\n\n");
+         cat(sprintf("Statement: %s\n", statement));
 
-	dbClearResult(res);
+         ex <- dbGetException(conn);
+
+         if (rollbackOnError) dbRollback(conn);
+         print(ex);
+         stop("stopping on SQL exception.");
+      }
+   );
+
+   dbClearResult(res);
 }
 

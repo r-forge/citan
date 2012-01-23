@@ -179,8 +179,8 @@ NA
 #'
 #' \if{html}{\out{<p><img src='../doc/CITAN-lbs.png' alt='Tables in a local bibliometric storage and their relations' /></p>}}{}
 #'
-#' @title Establish a Local Bibliometric Storage
-#' @param conn a connection object as produced by \code{\link{lbsConnect}}.
+#' @title Create a Local Bibliometric Storage
+#' @param conn a connection object, see \code{\link{lbsConnect}}.
 #' @param verbose logical; \code{TRUE} to inform about the progress of database contents' creation.
 #' @examples
 #' \dontrun{
@@ -195,6 +195,11 @@ NA
 #' @export
 lbsCreate <- function(conn, verbose=TRUE)
 {
+   CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
+
+
+   ## --------- auxiliary function -------------------------------------------
+   
    #' /internal/
    .lbsCreateTable <- function(conn, tablename, query, verbose)
    {
@@ -206,6 +211,7 @@ lbsCreate <- function(conn, verbose=TRUE)
    }
 
 
+   ## --------- auxiliary function -------------------------------------------
 
    #' /internal/
    .lbsCreateView <- function(conn, viewname, query, verbose)
@@ -217,6 +223,8 @@ lbsCreate <- function(conn, verbose=TRUE)
       if (verbose) cat("DONE.\n");
    }
 
+
+   ## --------- auxiliary function -------------------------------------------
 
    #' /internal/
    .lbsCreateIndex <- function(conn, indexname, query, verbose)
@@ -230,7 +238,7 @@ lbsCreate <- function(conn, verbose=TRUE)
 
 
 
-   CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
+   ## ---- check whether LBS is empty ------------------------------------
 
 
    tablesviews <- dbListTables(conn);
@@ -240,7 +248,7 @@ lbsCreate <- function(conn, verbose=TRUE)
       stop("database is not empty");
 
 
-   # -------------------------------------------------------------------
+   ## -------------------------------------------------------------------
 
    query <- "CREATE TABLE Biblio_Categories (
       IdCategory        INTEGER PRIMARY KEY ASC,
@@ -255,7 +263,8 @@ lbsCreate <- function(conn, verbose=TRUE)
 
 
    query <- "CREATE TABLE Biblio_Sources (
-      IdSource      UNSIGNED BIG INT PRIMARY KEY AUTOINCREMENT,
+      IdSource      INTEGER PRIMARY KEY NOT NULL,
+      AlternativeId VARCHAR(31)  UNIQUE NOT NULL,
       Title         VARCHAR(255) NOT NULL,
       IsActive      BOOLEAN,
       IsOpenAccess  BOOLEAN,
@@ -279,7 +288,7 @@ lbsCreate <- function(conn, verbose=TRUE)
 
 
    query <- "CREATE TABLE Biblio_SourcesCategories (
-      IdSource          UNSIGNED BIG INT NOT NULL,
+      IdSource          INTEGER NOT NULL,
       IdCategory        INTEGER NOT NULL,
       PRIMARY KEY(IdSource, IdCategory),
       FOREIGN KEY(IdSource)     REFERENCES Biblio_Sources(IdSource),
@@ -296,8 +305,8 @@ lbsCreate <- function(conn, verbose=TRUE)
 
 
    query <- "CREATE TABLE Biblio_Documents (
-      IdDocument     UNSIGNED BIG INT      PRIMARY KEY AUTOINCREMENT,
-      IdSource       UNSIGNED BIG INT,
+      IdDocument     INTEGER PRIMARY KEY AUTOINCREMENT,
+      IdSource       INTEGER,
       AlternativeId  VARCHAR(31)  UNIQUE NOT NULL,
       Title          VARCHAR(255),
       BibEntry       TEXT,
@@ -310,11 +319,12 @@ lbsCreate <- function(conn, verbose=TRUE)
 
    .lbsCreateTable(conn, "Biblio_Documents", query, verbose);
 
+
    
 
    query <- "CREATE TABLE Biblio_Citations (
-      IdDocumentParent     UNSIGNED BIG INT NOT NULL,
-      IdDocumentChild      UNSIGNED BIG INT NOT NULL,
+      IdDocumentParent     INTEGER NOT NULL,
+      IdDocumentChild      INTEGER NOT NULL,
       PRIMARY KEY(IdDocumentParent, IdDocumentChild),
       FOREIGN KEY(IdDocumentParent) REFERENCES Biblio_Documents(IdDocument),
       FOREIGN KEY(IdDocumentChild)  REFERENCES Biblio_Documents(IdDocument)
@@ -334,7 +344,7 @@ lbsCreate <- function(conn, verbose=TRUE)
    .lbsCreateTable(conn, "Biblio_Surveys", query, verbose);
 
    query <- "CREATE TABLE Biblio_DocumentsSurveys (
-      IdDocument     UNSIGNED BIG INT NOT NULL,
+      IdDocument     INTEGER NOT NULL,
       IdSurvey       INTEGER NOT NULL,
       PRIMARY KEY(IdDocument, IdSurvey),
       FOREIGN KEY(IdSurvey)   REFERENCES Biblio_Surveys(IdSurvey),
@@ -349,17 +359,19 @@ lbsCreate <- function(conn, verbose=TRUE)
    query <- "CREATE TABLE Biblio_Authors (
       IdAuthor     INTEGER PRIMARY KEY AUTOINCREMENT,
       Name         VARCHAR(63) NOT NULL UNIQUE,
-      AuthorGroup  UNSIGNED BIG INT NOT NULL
+      AuthorGroup  UNSIGNED BIG INT
    );"
 
    .lbsCreateTable(conn, "Biblio_Authors", query, verbose);
 
 
+   
+   
 
 
    query <- "CREATE TABLE Biblio_AuthorsDocuments (
       IdAuthor     INTEGER NOT NULL,
-      IdDocument   UNSIGNED BIG INT NOT NULL,
+      IdDocument   INTEGER NOT NULL,
       PRIMARY KEY(IdAuthor, IdDocument),
       FOREIGN KEY(IdAuthor)   REFERENCES Biblio_Authors(IdAuthor),
       FOREIGN KEY(IdDocument) REFERENCES Biblio_Documents(IdDocument)
@@ -379,7 +391,7 @@ lbsCreate <- function(conn, verbose=TRUE)
       FROM Biblio_DocumentsSurveys
       JOIN Biblio_Surveys ON Biblio_DocumentsSurveys.IdSurvey=Biblio_Surveys.IdSurvey;";
 
-   .lbsCreateView(conn, "ViewBiblio_DocumentsSurveys", query, verbose);
+#    .lbsCreateView(conn, "ViewBiblio_DocumentsSurveys", query, verbose);
 
 
    query <- "CREATE VIEW ViewBiblio_DocumentsCategories AS
@@ -402,7 +414,7 @@ lbsCreate <- function(conn, verbose=TRUE)
       ) AS DocSrcCat
       JOIN Biblio_Categories ON DocSrcCat.IdCategoryGroup=Biblio_Categories.IdCategory;";
 
-   .lbsCreateView(conn, "ViewBiblio_DocumentsCategories", query, verbose);
+#    .lbsCreateView(conn, "ViewBiblio_DocumentsCategories", query, verbose);
 
    # -------------------------------------------------------------------
 
