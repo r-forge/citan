@@ -31,20 +31,17 @@ NA
 #' This data frame consists of 30794 records.
 #' It has the following columns.
 #' \tabular{ll}{
-#'   \code{Record} \tab Unique source identifier in \emph{SciVerse Scopus} (character string). \cr
+#'   \code{SourceId} \tab Unique source identifier in \emph{SciVerse Scopus} (integer). \cr
 #'   \code{Title} \tab Title of the source. \cr
-#'   \code{ISSN_Print} \tab Print ISSN (8 characters). \cr
-#'   \code{ISSN_E} \tab E-ISSN (8 characters). \cr
 #'   \code{Status} \tab Status of the source, either \code{Active} or \code{Inactive}. \cr
-#'   \code{SJR_2007} \tab SCImago Journal Rank for 2007. \cr
-#'   \code{SNIP_2007} \tab Source Normalized Impact per Paper for 2007. \cr
-#'   \code{SJR_2008} \tab SCImago Journal Rank for 2008. \cr
-#'   \code{SNIP_2008} \tab Source Normalized Impact per Paper for 2008. \cr
-#'   \code{SJR_2009} \tab SCImago Journal Rank for 2009. \cr
-#'   \code{SNIP_2009} \tab Source Normalized Impact per Paper for 2009. \cr
+#'   \code{SJR_2009} \tab SCImago Journal Rank 2009. \cr
+#'   \code{SNIP_2009} \tab Source Normalized Impact per Paper 2009. \cr
+#'   \code{SJR_2010} \tab SCImago Journal Rank 2010. \cr
+#'   \code{SNIP_2010} \tab Source Normalized Impact per Paper 2010. \cr
+#'   \code{SJR_2011} \tab SCImago Journal Rank 2011. \cr
+#'   \code{SNIP_2011} \tab Source Normalized Impact per Paper 2011. \cr
 #'   \code{OpenAccess} \tab Type of Open Access, see below. \cr
 #'   \code{Type} \tab Type of the source, see below. \cr
-#'   \code{Country} \tab Country of origin. \cr
 #'   \code{ASJC} \tab A list of semicolon-separated ASJC classification codes, see \code{\link{Scopus_ASJC}}. \cr
 #' }
 #'
@@ -53,7 +50,7 @@ NA
 #'
 #' \code{Type} is one of \code{Book Series}, \code{Conference Proceedings}, \code{Journal}, \code{Trade Journal}
 #'
-#' The \code{data.frame} is sorted by \code{ISSN_Print} and \code{Status} (secondary criterion; \code{Active} sources first).
+#' The \code{data.frame} is sorted by \code{Status} (\code{Active} sources first) and then by \code{SJR_2011} (higher values first).
 #'
 #' @title Scopus covered source list
 #' @name Scopus_SourceList
