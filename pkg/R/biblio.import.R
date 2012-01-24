@@ -64,6 +64,7 @@ NA
 #' @param conn a connection object, see \code{\link{lbsConnect}}.
 #' @param data 11 column \code{data.frame} with bibliometric entries; see above.
 #' @param surveyDescription description of the survey. Allows for documents grouping.
+#' @param surnameFirstnameCommaSeparated logical; indicates wher surnames are separated from first names (or initials) by comma or by space (\code{FALSE}, default).
 #' @param originalFilename original filename; \code{attr(data, "filename")} used by default.
 #' @param excludeRows a numeric vector with row numbers of \code{data} to be excluded or \code{NULL}.
 #' @param updateDocumentIfExists logical; if \code{TRUE} then documents with existing \code{AlternativeId} will be updated.
@@ -82,6 +83,7 @@ NA
 #' dbDisconnect(conn);}
 #' @export
 lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
+   surnameFirstnameCommaSeparated = FALSE,
    originalFilename=attr(data, "filename"),
    excludeRows=NULL,  updateDocumentIfExists=TRUE,
    warnSourceTitle=TRUE, warnExactDuplicates=FALSE, verbose=TRUE)
@@ -160,7 +162,7 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    ## --------- auxiliary function -------------------------------------------
 
    #' /internal/
-   .lbsImportDocuments_Add <- function(conn, record, idSurvey, i,
+   .lbsImportDocuments_Add <- function(conn, record, idAuthors, idSurvey, i, surnameFirstnameCommaSeparated,
       updateDocumentIfExists, warnExactDuplicates, warnSourceTitle, verbose)
    {
       idSource <- sqlNumericOrNULL(.lbsImportDocuments_Add_Get_idSource(conn, record$SourceTitle, i, warnSourceTitle));
@@ -245,32 +247,12 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
 
       if (documentExists && !updateDocumentIfExists) return(FALSE);
 
-
-      # add authors
-      authors <- strsplit(record$Authors, "[[:space:]]*,[[:space:]]*")[[1]];
-      stopifnot(length(authors)>0);
-      for (j in 1:length(authors))
+      for (j in 1:length(idAuthors))
       {
-         stopifnot(nchar(authors[j])>0);
-
-
-         # Get idAuthor (and add him/her if necessary)
-         idAuthor <- dbGetQuery(conn, sprintf("SELECT IdAuthor FROM Biblio_Authors WHERE UPPER(Name)=UPPER(%s)",
-            sqlStringOrNULL(authors[j])
-         ));
-         if (nrow(idAuthor) == 0)
-         {
-            dbExecQuery(conn, sprintf("INSERT INTO Biblio_Authors(Name) VALUES(%s);", sqlStringOrNULL(authors[j])), TRUE);
-            idAuthor <- dbGetQuery(conn, "SELECT last_insert_rowid()")[1,1];
-         } else {
-            idAuthor <- idAuthor[1,1];
-         }
-
-
-         query <- sprintf("INSERT OR IGNORE INTO Biblio_AuthorsDocuments(IdAuthor, IdDocument)
-            VALUES(%s, %s);",
-            sqlNumericOrNULL(idAuthor),
-            sqlNumericOrNULL(idDocument));
+         query <- sprintf("INSERT OR IGNORE INTO Biblio_AuthorsDocuments(IdAuthor, IdDocument) %s",
+                   paste(
+                      sprintf("SELECT %s AS 'IdAuthor', %s AS 'IdDocument'", sqlNumericOrNULL(idAuthors), sqlNumericOrNULL(idDocument)),
+                      collapse=" UNION "));
          dbExecQuery(conn, query, TRUE);
       }
 
@@ -310,6 +292,8 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
 
    if (verbose) cat("Importing documents and their authors... ");
 
+   n <- as.integer(nrow(data));
+
 
    if (!is.null(excludeRows))
       data <- data[-excludeRows,];
@@ -342,22 +326,77 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
             CITAN:::.lbs_DocumentTypesShort
          );
 
+   ## PREPARE authors
+   authors <- strsplit(data$Authors, "[[:space:]]*,[[:space:]]*");
+   hashAuthors <- hash();
+   stopifnot(length(authors) == n);
+   for (i in 1:n)
+   {
+      m <- length(authors[[i]]);
+      stopifnot(m>0);
+      stopifnot(all(nchar(authors[[i]]))>0);
+      if (surnameFirstnameCommaSeparated)
+      {
+         if (m>1) # "[No author name available]"
+         {
+            if (m%%2 == 1)
+            {
+               stop(sprintf("Error while extracting author names @ row=%g.", i));
+            }
+            idx <- (1:(m/2)-1)*2+1;
+            authors[[i]] <- paste(authors[[i]][idx], authors[[i]][-idx], sep=" ");
+            hashAuthors[authors[[i]]] <- NA;
+         }
+      }
+   }
+
+
+   ## IMPORT authors
+   hashAuthorNames <- names(as.list(hashAuthors));
+   p <- length(hashAuthorNames);
+   if (verbose)
+      window <- CITAN:::.gtk2.progressBar(0, p,
+         info=sprintf("Importing %g authors...", p));
+
+   k <- 0L;
+   dbExecQuery(conn, "PRAGMA journal_mode = MEMORY");
+   dbBeginTransaction(conn); 
+   for (i in 1:p)
+   {
+      # Get idAuthor (and add him/her if necessary)
+      idAuthor <- dbGetQuery(conn, sprintf("SELECT IdAuthor FROM Biblio_Authors WHERE UPPER(Name)=UPPER(%s)",
+         sqlStringOrNULL(hashAuthorNames[i])
+      ));
+      if (nrow(idAuthor) == 0)
+      {
+         dbExecQuery(conn, sprintf("INSERT INTO Biblio_Authors(Name) VALUES(%s);", sqlStringOrNULL(hashAuthorNames[i])), TRUE);
+         idAuthor <- dbGetQuery(conn, "SELECT last_insert_rowid()")[1,1];
+      } else {
+         idAuthor <- idAuthor[1,1];
+      }
+      hashAuthors[hashAuthorNames[i]] <- idAuthor;
+         
+      if (verbose) CITAN:::.gtk2.progressBar(i,p,window=window);
+   }
+   dbCommit(conn);
+   if (verbose) cat(sprintf("OK, %g new authors added.\n", k));
+   
    ## -------------------------------------------------------------------
 
 
    k <- 0L;
-   n <- as.integer(nrow(data));
 
    if (verbose)
       window <- CITAN:::.gtk2.progressBar(0, n,
-         info=sprintf("Importing %g documents and their authors to %s/%s...",
+         info=sprintf("Importing %g documents to %s/%s...",
          n, surveyDescription, originalFilename));
 
    dbExecQuery(conn, "PRAGMA journal_mode = MEMORY");
    dbBeginTransaction(conn);
    for (i in 1:n)
    {
-      if (.lbsImportDocuments_Add(conn, data[i,], idSurvey, i,
+      if (.lbsImportDocuments_Add(conn, data[i,], unlist(as.list(hashAuthors))[authors[[i]]],
+         idSurvey, i, surnameFirstnameCommaSeparated,
          updateDocumentIfExists, warnExactDuplicates, warnSourceTitle, verbose))
       {
          k <- k+1L;
@@ -368,7 +407,10 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    dbCommit(conn);
 
 
-   if (verbose) cat(sprintf("OK, %g of %g records added to %s/%s.\n", k, n, surveyDescription, originalFilename));
+   if (verbose) cat(sprintf("OK, %g of %g new records added to %s/%s.\n", k, n, surveyDescription, originalFilename));
+
+   clear(hashAuthors);
+   rm(hashAuthors);
 
    ## -------------------------------------------------------------------
 

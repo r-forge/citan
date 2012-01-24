@@ -44,7 +44,7 @@ NA
 #' \item \code{Page.start}: Start page number,
 #' \item \code{Page.end}: End page number,
 #' \item \code{Cited.by}: Number of citations received,
-#' \item \code{Link}: String containing unique document identifier of the form ...id=\emph{\strong{UNIQUE_ID}}&...
+#' \item \code{Link}: String containing unique document identifier, by default of the form ...id=\emph{\strong{UNIQUE_ID}}&... (see \code{alternativeIdPattern} parameter),
 #' \item \code{Document.Type}: Document type, one of: \dQuote{Article}, \dQuote{Article in Press},
 #'        \dQuote{Book}, \dQuote{Conference Paper}, \dQuote{Editorial},
 #'        \dQuote{Erratum}, \dQuote{Letter}, \dQuote{Note}, \dQuote{Report},
@@ -67,13 +67,14 @@ NA
 #' @param filename the name of the file which the data are to be read from, see \code{\link{read.csv}}.
 #' @param stopOnErrors logical; \code{TRUE} to stop on all potential parse errors or just warn otherwise.
 #' @param dbIdentifier character or \code{NA}; database identifier, helps detect parse errors, see above.
+#' @param alternativeIdPattern character; regular expression used to extract AlternativeId, \code{NA} to get the id as is,
 #' @param ... further arguments to be passed to \code{read.csv}.
 #' @return A \code{data.frame} containing the following 11 columns:
 #' \tabular{ll}{
 #' \code{Authors} \tab	Author name(s), comma-separated, surnames first.\cr
 #' \code{Title} \tab	Document title.\cr
 #' \code{Year} \tab	Year of publication.\cr
-#' \code{AlternativeId} \tab	Alternative document identifier.\cr
+#' \code{AlternativeId} \tab	Unique document identifier.\cr
 #' \code{SourceTitle} \tab	Title of the source containing the document.\cr
 #' \code{Volume} \tab	Volume.\cr
 #' \code{Issue} \tab	Issue.\cr
@@ -96,7 +97,7 @@ NA
 #' \code{\link{Scopus_ImportSources}},\cr
 #' \code{\link{read.table}}, \code{\link{lbsImportDocuments}}
 #' @export
-Scopus_ReadCSV <- function(filename, stopOnErrors=TRUE, dbIdentifier='Scopus', ...)
+Scopus_ReadCSV <- function(filename, stopOnErrors=TRUE, dbIdentifier='Scopus', alternativeIdPattern="^.*\\id=|\\&.*$", ...)
 {
    datafile <- read.csv(filename, header = T, encoding="UTF-8", fileEncoding="UTF-8", stringsAsFactors=FALSE, ...);
 
@@ -123,7 +124,12 @@ Scopus_ReadCSV <- function(filename, stopOnErrors=TRUE, dbIdentifier='Scopus', .
    }
    
 
-   datafile$AlternativeId <- gsub("^.*\\id=|\\&.*$", "", datafile$Link);
+   if (!is.na(alternativeIdPattern))
+   {
+      datafile$AlternativeId <- gsub(alternativeIdPattern, "", datafile$Link); # REG EXP
+   } else {
+      datafile$AlternativeId <- datafile$Link; # AS IS
+   }
    datafile$AlternativeId[datafile$AlternativeId == ""] <- NA;
 
 
