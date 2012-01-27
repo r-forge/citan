@@ -177,11 +177,11 @@ NA
 #'          ON DocSrcCat.IdCategoryGroup=Biblio_Categories.IdCategory;
 #' }
 #'
-#' \if{html}{\out{<p><img src='../doc/CITAN-lbs.png' alt='Tables in a local bibliometric storage and their relations' /></p>}}{}
+#' \if{html}{\out{<p><img src='../doc/CITAN-lbs.png' alt='Entity Relationship Diagram for a Local Bibliometric Storage' /></p>}}{}
 #'
 #' @title Create a Local Bibliometric Storage
 #' @param conn a connection object, see \code{\link{lbsConnect}}.
-#' @param verbose logical; \code{TRUE} to inform about the progress of database contents' creation.
+#' @param verbose logical; \code{TRUE} to be more verbose.
 #' @examples
 #' \dontrun{
 #' conn <- lbsConnect("Bibliometrics.db");
@@ -243,9 +243,9 @@ lbsCreate <- function(conn, verbose=TRUE)
 
    tablesviews <- dbListTables(conn);
    if (any(substr(tablesviews, 1, 7) == "Biblio_"))
-      stop("database is not empty");
+      stop("Your Local Bibliometric Storage is not empty.");
    if (any(substr(tablesviews, 1, 11) == "ViewBiblio_"))
-      stop("database is not empty");
+      stop("Your Local Bibliometric Storage is not empty.");
 
 
    ## -------------------------------------------------------------------
@@ -418,6 +418,8 @@ lbsCreate <- function(conn, verbose=TRUE)
 
    # -------------------------------------------------------------------
 
+   if (verbose) cat("Your Local Bibliometric Storage has been created.
+   Perhaps you may want to use Scopus_ImportSources(...) to import source information.\n");
 
    return(TRUE);
 }

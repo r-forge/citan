@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski
+## Copyright 2011-2012 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
@@ -25,16 +25,18 @@ NA
 #' Connects to a Local Bibliometric Storage handled by the SQLite engine
 #' (see \pkg{RSQLite} package documentation).
 #'
-#' Do not forget to close the connection (represented by the object returned)
-#' with \code{\link{dbDisconnect}} after use.
-#' Note that you may freely access the database using
-#' functions from the \pkg{DBI} package called on the
-#' returned connection object.
+#' Do not forget to close the connection (represented by the connection object returned)
+#' with the \code{\link{dbDisconnect}} function after use.
+#'
+#' Please note that the database may be also accessed by using
+#' lower-level functions from the \pkg{DBI} package called on the
+#' returned connection object. The table-view structure of a Local
+#' Bibliometric Storage is presented in the man page of the
+#' \code{\link{dbCreate}} function.
 #'
 #' @title Connect to a Local Bibliometric Storage
-#' @param dbfilename name of the file storing the SQLite database.
-#' @return An object of type \code{SQLiteConnection}.
-#' It is used to direct commands to the SQLite engine.
+#' @param dbfilename filename of an SQLite database.
+#' @return An object of type \code{SQLiteConnection}, used to communicate with the SQLite engine.
 #' @examples
 #' \dontrun{
 #' conn <- lbsConnect("Bibliometrics.db");
@@ -44,11 +46,26 @@ NA
 #' @export
 lbsConnect <- function(dbfilename)
 {
-	if (length(dbfilename)!=1 || !is.character(dbfilename))
-		stop("incorrect 'dbfilename' given");
+   if (length(dbfilename)!=1 || !is.character(dbfilename))
+      stop("incorrect 'dbfilename' given");
 
-	drv <- dbDriver("SQLite");
-	dbConnect(drv, dbname = dbfilename);
+   drv <- dbDriver("SQLite");
+   conn <- dbConnect(drv, dbname = dbfilename);
+
+   objects <- dbListTables(conn);
+   tables <- objects[substr(objects,1,7) == "Biblio_"];
+   views  <- objects[substr(objects,1,11) == "ViewBiblio_"];
+
+
+   if (length(tables) == 0 && length(views) == 0)
+   {
+      warning("Your Local Bibliometric Storage is empty. Use lbsCreate(...) to establish one.");
+   } else if (any((tables == "Biblio_Countries") | (tables == "Biblio_Languages")))
+   {
+      warning("Your Local Bibliometric Storage seems to be created by an older version of CITAN. Please re-create the database.");
+   }
+
+   return(conn);
 }
 
 
