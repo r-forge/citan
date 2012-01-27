@@ -46,7 +46,7 @@ NA
 #' lbsCreate(conn);
 #' Scopus_ImportSources(conn);
 #' ## ...
-#' dbDisconnect(conn);}
+#' lbsDisconnect(conn);}
 #' @seealso \code{\link{Scopus_ASJC}}, \code{\link{Scopus_SourceList}}, \code{\link{Scopus_ReadCSV}}, \code{\link{lbsConnect}}, \code{\link{lbsCreate}}
 Scopus_ImportSources <- function(conn, verbose=T)
 {

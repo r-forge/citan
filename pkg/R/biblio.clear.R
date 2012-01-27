@@ -73,7 +73,7 @@ lbsTidy <- function(conn)
 #' lbsCreate(conn);
 #' Scopus_ImportSources(conn);
 #' ## ...
-#' dbDisconnect(conn);}
+#' lbsDisconnect(conn);}
 #' @return \code{TRUE} on success.
 #' @seealso \code{\link{lbsConnect}}, \code{\link{lbsCreate}},
 #' \code{\link{Scopus_ImportSources}}, \code{\link{lbsDeleteAllAuthorsDocuments}}
@@ -143,7 +143,7 @@ lbsClear <- function(conn, verbose=TRUE)
 #' lbsDeleteAllAuthorsDocuments(conn);
 #' dbCommit(conn);
 #' ## ...
-#' dbDisconnect(conn);}
+#' lbsDisconnect(conn);}
 #' @export
 lbsDeleteAllAuthorsDocuments <- function(conn, verbose=TRUE)
 {

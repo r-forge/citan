@@ -26,7 +26,7 @@ NA
 #' (see \pkg{RSQLite} package documentation).
 #'
 #' Do not forget to close the connection (represented by the connection object returned)
-#' with the \code{\link{dbDisconnect}} function after use.
+#' with the \code{\link{lbsDisconnect}} function after use.
 #'
 #' Please note that the database may be also accessed by using
 #' lower-level functions from the \pkg{DBI} package called on the
@@ -41,8 +41,8 @@ NA
 #' \dontrun{
 #' conn <- lbsConnect("Bibliometrics.db");
 #' ## ...
-#' dbDisconnect(conn);}
-#' @seealso \code{\link{lbsCreate}}, \code{\link{dbDisconnect}}
+#' lbsDisconnect(conn);}
+#' @seealso \code{\link{lbsCreate}}, \code{\link{lbsDisconnect}}
 #' @export
 lbsConnect <- function(dbfilename)
 {
@@ -66,6 +66,26 @@ lbsConnect <- function(dbfilename)
    }
 
    return(conn);
+}
+
+
+#' Disconnects from a Local Bibliometric Storage.
+#'
+#'
+#' @title Disconnect from a Local Bibliometric Storage
+#' @param conn database connection object, see \code{\link{lbsConnect}}.
+#' @examples
+#' \dontrun{
+#' conn <- lbsConnect("Bibliometrics.db");
+#' ## ...
+#' lbsDisconnect(conn);}
+#' @seealso \code{\link{lbsConnect}}
+#' @export
+lbsDisconnect <- function(conn)
+{
+   CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
+   
+   dbDisconnect(conn);
 }
 
 

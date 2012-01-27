@@ -91,7 +91,7 @@ NA
 #' data <- Scopus_ReadCSV("db_Polish_MATH/Poland_MATH_1987-1993.csv");
 #' lbsImportDocuments(conn, data, "Poland_MATH");
 #' ## ...
-#' dbDisconnect(conn);}
+#' lbsDisconnect(conn);}
 #' @seealso \code{\link{Scopus_ASJC}}, \code{\link{Scopus_SourceList}},
 #' \code{\link{lbsConnect}},
 #' \code{\link{Scopus_ImportSources}},\cr

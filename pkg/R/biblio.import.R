@@ -80,7 +80,7 @@ NA
 #' data <- Scopus_ReadCSV("db_Polish_MATH/Poland_MATH_1987-1993.csv");
 #' lbsImportDocuments(conn, data, "Poland_MATH");
 #' ## ...
-#' dbDisconnect(conn);}
+#' lbsDisconnect(conn);}
 #' @export
 lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    surnameFirstnameCommaSeparated = FALSE,

@@ -28,12 +28,12 @@ NA
 #'
 #' The following SQL code is executed.
 #' \preformatted{
-#' CREATE TABLE Biblio_Categories (
-#'      -- Source classification codes (e.g. ASJC)
-#'    IdCategory         INTEGER PRIMARY KEY ASC,
-#'    IdCategoryParent   INTEGER NOT NULL,
-#'    Description        VARCHAR(63) NOT NULL,
-#'    FOREIGN KEY(IdCategoryParent) REFERENCES Biblio_Categories(IdCategory)
+#' CREATE TABLE Biblio_Categories (\cr
+#'      -- Source classification codes (e.g. ASJC)\cr
+#'    IdCategory         INTEGER PRIMARY KEY ASC,\cr
+#'    IdCategoryParent   INTEGER NOT NULL,\cr
+#'    Description        VARCHAR(63) NOT NULL,\cr
+#'    FOREIGN KEY(IdCategoryParent) REFERENCES Biblio_Categories(IdCategory)\cr
 #' );
 #' }
 #'
@@ -197,7 +197,7 @@ NA
 #' lbsCreate(conn);
 #' Scopus_ImportSources(conn);
 #' ## ...
-#' dbDisconnect(conn);}
+#' lbsDisconnect(conn);}
 #' @return \code{TRUE} on success.
 #' @seealso \code{\link{lbsConnect}}, \code{\link{lbsClear}}, \code{\link{Scopus_ImportSources}}, \code{\link{lbsTidy}}
 #' @export
