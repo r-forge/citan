@@ -30,9 +30,9 @@ NA
 #' \preformatted{
 #' CREATE TABLE Biblio_Categories (
 #'      -- Source classification codes (e.g. ASJC)
-#'    IdCategory        INTEGER PRIMARY KEY ASC,
+#'    IdCategory         INTEGER PRIMARY KEY ASC,
 #'    IdCategoryParent   INTEGER NOT NULL,
-#'    Description       VARCHAR(63) NOT NULL,
+#'    Description        VARCHAR(63) NOT NULL,
 #'    FOREIGN KEY(IdCategoryParent) REFERENCES Biblio_Categories(IdCategory)
 #' );
 #' }
@@ -41,19 +41,19 @@ NA
 #' \preformatted{
 #' CREATE TABLE Biblio_Sources (
 #'    IdSource      INTEGER PRIMARY KEY AUTOINCREMENT,
+#'    AlternativeId VARCHAR(31)  UNIQUE NOT NULL,
 #'    Title         VARCHAR(255) NOT NULL,
-#'    ISSN_Print    CHAR(8) UNIQUE CHECK
-#'       (length(ISSN_Print)=8 OR length(ISSN_Print) IS NULL),
-#'    ISSN_E        CHAR(8) UNIQUE CHECK
-#'       (length(ISSN_E)=8 OR length(ISSN_E) IS NULL),
 #'    IsActive      BOOLEAN,
 #'    IsOpenAccess  BOOLEAN,
 #'    Type          CHAR(2) CHECK (Type IN ('bs', 'cp', 'jo')),
 #'        -- Book Series / Conference Proceedings / Journal
 #'        -- or NULL in all other cases
-#'    IdCountry     INTEGER,
-#'    Impact        REAL, -- current value of an impact factor
-#'    FOREIGN KEY(IdCountry) REFERENCES Biblio_Countries(IdCountry)
+#'    Impact1        REAL, -- value of an impact factor
+#'    Impact2        REAL, -- value of an impact factor
+#'    Impact3        REAL, -- value of an impact factor
+#'    Impact4        REAL, -- value of an impact factor
+#'    Impact5        REAL, -- value of an impact factor
+#'    Impact6        REAL, -- value of an impact factor
 #' );
 #' }
 #'
@@ -68,33 +68,15 @@ NA
 #' );
 #' }
 #'
-#' \preformatted{
-#' CREATE TABLE Biblio_Surveys (
-#'      -- each call to lbsImportDocuments() puts a new record here,
-#'      -- they may be grouped using 'Description' into so-called 'Surveys'
-#'    IdSurvey       INTEGER PRIMARY KEY AUTOINCREMENT,
-#'    Description    VARCHAR(63) NOT NULL,   -- survey group name
-#'    FileName       VARCHAR(63),            -- original file name
-#'    Timestamp      DATETIME                -- date of file import
-#' );
-#' }
-#'
-#' \preformatted{
-#' CREATE TABLE Biblio_Languages (
-#'    IdLanguage      INTEGER PRIMARY KEY AUTOINCREMENT,
-#'    Name            VARCHAR(63) NOT NULL UNIQUE
-#' );
-#' }
 #'
 #' \preformatted{
 #' CREATE TABLE Biblio_Documents (
 #'    IdDocument     INTEGER PRIMARY KEY AUTOINCREMENT,
 #'    IdSource       INTEGER,
-#'    IdLanguage     INTEGER,
-#'    UniqueId       VARCHAR(31) UNIQUE NOT NULL,
+#'    AlternativeId  VARCHAR(31) UNIQUE NOT NULL,
 #'    Title          VARCHAR(255) NOT NULL,
-#'    BibEntry       VARCHAR(511) NOT NULL,
-#'        -- (Source Title,Year,Volume,Issue,Article Number,PageStart,PageEnd)
+#'    BibEntry       TEXT,
+#'        -- (e.g. Source Title,Year,Volume,Issue,Article Number,PageStart,PageEnd)
 #'    Year           INTEGER,
 #'    Pages          INTEGER,
 #'    Citations      INTEGER NOT NULL,
@@ -109,6 +91,31 @@ NA
 #' );
 #' }
 #'
+#'
+#'  \preformatted{
+#'  CREATE TABLE Biblio_Citations (
+#'     IdDocumentParent     INTEGER NOT NULL,  # cited document
+#'     IdDocumentChild      INTEGER NOT NULL,  # reference
+#'     PRIMARY KEY(IdDocumentParent, IdDocumentChild),
+#'     FOREIGN KEY(IdDocumentParent) REFERENCES Biblio_Documents(IdDocument),
+#'     FOREIGN KEY(IdDocumentChild)  REFERENCES Biblio_Documents(IdDocument)
+#' );
+#' }
+#'
+#'
+#' \preformatted{
+#' CREATE TABLE Biblio_Surveys (
+#'      -- each call to lbsImportDocuments() puts a new record here,
+#'      -- they may be grouped into so-called 'Surveys' using 'Description' field
+#'    IdSurvey       INTEGER PRIMARY KEY AUTOINCREMENT,
+#'    Description    VARCHAR(63) NOT NULL,   -- survey group name
+#'    FileName       VARCHAR(63),            -- original file name
+#'    Timestamp      DATETIME                -- date of file import
+#' );
+#' }
+#' 
+#' 
+#' 
 #' \preformatted{
 #' CREATE TABLE Biblio_DocumentsSurveys (
 #'    -- note that the one Document may often be found in many Surveys
@@ -123,7 +130,8 @@ NA
 #' \preformatted{
 #' CREATE TABLE Biblio_Authors (
 #'    IdAuthor        INTEGER PRIMARY KEY AUTOINCREMENT,
-#'    Name            VARCHAR(63) NOT NULL UNIQUE
+#'    Name            VARCHAR(63) NOT NULL UNIQUE,
+#'    AuthorGroup     UNSIGNED BIG INT # used to merge authors with non-unique representations
 #' );
 #' }
 #'
@@ -138,7 +146,7 @@ NA
 #' );
 #' }
 #'
-#' In addition, the following views are created.
+#' In addition, the following views are created.  [!!! TO BE DONE !!!]
 #' \preformatted{
 #' CREATE VIEW ViewBiblio_DocumentsSurveys AS
 #'    SELECT
