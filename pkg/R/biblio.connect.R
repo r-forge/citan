@@ -32,7 +32,7 @@ NA
 #' lower-level functions from the \pkg{DBI} package called on the
 #' returned connection object. The table-view structure of a Local
 #' Bibliometric Storage is presented in the man page of the
-#' \code{\link{dbCreate}} function.
+#' \code{\link{lbsCreate}} function.
 #'
 #' @title Connect to a Local Bibliometric Storage
 #' @param dbfilename filename of an SQLite database.
