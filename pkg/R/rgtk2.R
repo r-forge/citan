@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski
+## Copyright 2011-2012 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
@@ -262,9 +262,10 @@
 	{
 		stopifnot(is.null(window));
 		
-		window <- gtkWindowNew("toplevel", FALSE);
+		window <- gtkWindowNew(GTK_WINDOW_TOPLEVEL, FALSE);
 		window$setDefaultSize(250, 60);
 		window$setTitle("Operation progress");
+		window$setModal(TRUE);
 		
 		box <- gtkVBox(FALSE);
 		

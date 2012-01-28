@@ -11,7 +11,10 @@ CITAN PACKAGE CHANGELOG
    * Scopus_ImportSources - rewritten, optimized.
    * Scopus_ReadCSV() - rewritten, allows other formats than 40 column CSVs.
    * lbsImportDocuments() - rewritten, Sources are identified by Title
-       (instead of ISSN, which is not available in Scopus `Citations only' format).
+       (instead of ISSN, which is not available in Scopus `Citations only' format),
+       surnameFirstnameCommaSeparated parameter (defaults FALSE for
+       backward compatibility), author names are converted to upper case while
+       adding.
    * lbsCreate() - new RDBS scheme (Biblio_Citations added,
        Biblio_Languages and Biblio_Countries dropped,
        allow for nondestructive Author merging - AuthorGroup field)

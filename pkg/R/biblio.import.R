@@ -327,7 +327,7 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
          );
 
    ## PREPARE authors
-   authors <- strsplit(data$Authors, "[[:space:]]*,[[:space:]]*");
+   authors <- strsplit(toupper(data$Authors), "[[:space:]]*,[[:space:]]*");
    hashAuthors <- hash();
    stopifnot(length(authors) == n);
    for (i in 1:n)
@@ -355,8 +355,11 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    hashAuthorNames <- names(as.list(hashAuthors));
    p <- length(hashAuthorNames);
    if (verbose)
+   {
+      cat(sprintf("Importing %g authors... ", p));
       window <- CITAN:::.gtk2.progressBar(0, p,
          info=sprintf("Importing %g authors...", p));
+   }
 
    k <- 0L;
    dbExecQuery(conn, "PRAGMA journal_mode = MEMORY");
@@ -364,13 +367,14 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    for (i in 1:p)
    {
       # Get idAuthor (and add him/her if necessary)
-      idAuthor <- dbGetQuery(conn, sprintf("SELECT IdAuthor FROM Biblio_Authors WHERE UPPER(Name)=UPPER(%s)",
+      idAuthor <- dbGetQuery(conn, sprintf("SELECT IdAuthor FROM Biblio_Authors WHERE Name=%s",
          sqlStringOrNULL(hashAuthorNames[i])
       ));
       if (nrow(idAuthor) == 0)
       {
          dbExecQuery(conn, sprintf("INSERT INTO Biblio_Authors(Name) VALUES(%s);", sqlStringOrNULL(hashAuthorNames[i])), TRUE);
          idAuthor <- dbGetQuery(conn, "SELECT last_insert_rowid()")[1,1];
+         k <- k+1;
       } else {
          idAuthor <- idAuthor[1,1];
       }
@@ -379,11 +383,10 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
       if (verbose) CITAN:::.gtk2.progressBar(i,p,window=window);
    }
    dbCommit(conn);
-   if (verbose) cat(sprintf("OK, %g new authors added.\n", k));
+   if (verbose) cat(sprintf("%g new authors added.\n", k));
    
    ## -------------------------------------------------------------------
-
-
+   
    k <- 0L;
 
    if (verbose)
@@ -407,7 +410,7 @@ lbsImportDocuments <- function(conn, data, surveyDescription="Default survey",
    dbCommit(conn);
 
 
-   if (verbose) cat(sprintf("OK, %g of %g new records added to %s/%s.\n", k, n, surveyDescription, originalFilename));
+   if (verbose) cat(sprintf("Done, %g of %g new records added to %s/%s.\n", k, n, surveyDescription, originalFilename));
 
    clear(hashAuthors);
    rm(hashAuthors);
