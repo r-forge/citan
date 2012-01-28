@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski
+## Copyright 2011-2012 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ lbsGetInfoAuthors <- function(conn, idAuthors)
 #' \item \code{Authors} --- list of \code{authorinfo} objects (see e.g. \code{\link{as.character.authorinfo}}).
 #' \item \code{Title} --- title of the document,
 #' \item \code{BibEntry} --- bibliographic entry,
-#' \item \code{UniqueId} --- unique character identifier,
+#' \item \code{AlternativeId} --- unique character identifier,
 #' \item \code{Pages} --- number of pages,
 #' \item \code{Citations} --- number of citations,
 #' \item \code{Year} --- publication year,
@@ -114,7 +114,7 @@ lbsGetInfoDocuments <- function(conn, idDocuments)
 		stop("'idDocuments' must be a nonempty numeric vector.");
 		
 	idDocuments_str <- paste(idDocuments, collapse=",");
-	query <- sprintf("SELECT IdDocument, Title, BibEntry, UniqueId, Pages, Citations, Year, Type
+	query <- sprintf("SELECT IdDocument, Title, BibEntry, AlternativeId, Pages, Citations, Year, Type
 			FROM Biblio_Documents WHERE IdDocument IN (%s) ORDER BY IdDocument",
 			idDocuments_str);
 			
@@ -156,7 +156,7 @@ lbsGetInfoDocuments <- function(conn, idDocuments)
 		}
 		
 		doc <- list(IdDocument=res[k,1], Authors=authors, Title=res[k,2], BibEntry=res[k,3],
-			UniqueId=res[k,4], Pages=res[k,5], Citations=res[k,6],
+			AlternativeId=res[k,4], Pages=res[k,5], Citations=res[k,6],
 			Year=res[k,7], Type=CITAN:::.lbs_DocumentType_ShortToFull(res[k,8]));
 			
 		class(doc) <- "docinfo";
@@ -183,7 +183,7 @@ lbsGetInfoDocuments <- function(conn, idDocuments)
 #' \item \code{Authors} --- list of \code{authorinfo} objects (see e.g. \code{\link{as.character.authorinfo}}).
 #' \item \code{Title} --- title of the document,
 #' \item \code{BibEntry} --- bibliographic entry,
-#' \item \code{UniqueId} --- unique character identifier,
+#' \item \code{AlternativeId} --- unique character identifier,
 #' \item \code{Pages} --- number of pages,
 #' \item \code{Citations} --- number of citations,
 #' \item \code{Year} --- publication year,
@@ -201,7 +201,7 @@ lbsGetInfoDocuments <- function(conn, idDocuments)
 as.character.docinfo <- function(x, ...)
 {
 	ret <-            sprintf("IdDocument: %g", x$IdDocument);
-	ret <- paste(ret, sprintf("UniqueId:   %s", x$UniqueId), sep="\n");
+	ret <- paste(ret, sprintf("AlternativeId:   %s", x$AlternativeId), sep="\n");
 	ret <- paste(ret, sprintf("Title:      %s", x$Title), sep="\n");
 	ret <- paste(ret, sprintf("BibEntry:   %s", x$BibEntry), sep="\n");
 	ret <- paste(ret, sprintf("Year:       %s", x$Year), sep="\n");

@@ -91,7 +91,7 @@ Scopus_ImportSources <- function(conn, verbose=T)
       for (i in 1:n) dbExecQuery(conn, queries[i], TRUE);
       dbCommit(conn);
 
-      if (verbose) cat(sprintf("OK, %g records added.\n", n));
+      if (verbose) cat(sprintf("Done, %g records added.\n", n));
    }
 
 
@@ -186,14 +186,14 @@ Scopus_ImportSources <- function(conn, verbose=T)
 
 
       ## -----  now check which rows were added and report missing values ------
-      if (length(omitted) > 0)
+      if (verbose) cat(sprintf("Done, %g of %g records added; %g ASJC codes processed.\n", n-length(omitted), n, k));
+      
+      if (length(omitted) > 0 && verbose)
       {
          cat(sprintf("Note: %g records omitted @ rows=%s.\n",
             length(omitted), paste(omitted,collapse=","))
          );
       }
-
-      if (verbose) cat(sprintf("OK, %g of %g records added; %g ASJC codes processed.\n", n-length(omitted), n, k));
    }
 
 

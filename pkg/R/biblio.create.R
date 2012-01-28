@@ -146,7 +146,7 @@ NA
 #' );
 #' }
 #'
-#' In addition, the following views are created.  [!!! TO BE DONE !!!]
+#' In addition, the following views are created.  
 #' \preformatted{
 #' CREATE VIEW ViewBiblio_DocumentsSurveys AS
 #'    SELECT
@@ -166,15 +166,15 @@ NA
 #'       IdDocument AS IdDocument,
 #'       DocSrcCat.IdCategory AS IdCategory,
 #'       DocSrcCat.Description AS Description,
-#'       DocSrcCat.IdCategoryGroup AS IdCategoryGroup,
-#'       Biblio_Categories.Description AS DescriptionGroup
+#'       DocSrcCat.IdCategoryParent AS IdCategoryParent,
+#'       Biblio_Categories.Description AS DescriptionParent
 #'    FROM
 #'    (
 #'       SELECT
 #'          Biblio_Documents.IdDocument AS IdDocument,
 #'          Biblio_SourcesCategories.IdCategory AS IdCategory,
 #'          Biblio_Categories.Description AS Description,
-#'          Biblio_Categories.IdCategoryGroup AS IdCategoryGroup
+#'          Biblio_Categories.IdCategoryParent AS IdCategoryParent
 #'       FROM Biblio_Documents
 #'       JOIN Biblio_SourcesCategories
 #'          ON Biblio_Documents.IdSource=Biblio_SourcesCategories.IdSource
@@ -182,7 +182,7 @@ NA
 #'          ON Biblio_SourcesCategories.IdCategory=Biblio_Categories.IdCategory
 #'    ) AS DocSrcCat
 #'    JOIN Biblio_Categories
-#'          ON DocSrcCat.IdCategoryGroup=Biblio_Categories.IdCategory;
+#'          ON DocSrcCat.IdCategoryParent=Biblio_Categories.IdCategory;
 #' }
 #'
 #' \if{html}{\out{<p><img src='../doc/CITAN-lbs.png' alt='Entity Relationship Diagram for a Local Bibliometric Storage' /></p>}}{}
@@ -215,7 +215,7 @@ lbsCreate <- function(conn, verbose=TRUE)
 
       dbExecQuery(conn, query, FALSE);
 
-      if (verbose) cat("DONE.\n");
+      if (verbose) cat("Done.\n");
    }
 
 
@@ -228,7 +228,7 @@ lbsCreate <- function(conn, verbose=TRUE)
 
       dbExecQuery(conn, query, FALSE);
 
-      if (verbose) cat("DONE.\n");
+      if (verbose) cat("Done.\n");
    }
 
 
@@ -241,7 +241,7 @@ lbsCreate <- function(conn, verbose=TRUE)
 
       dbExecQuery(conn, query, FALSE);
 
-      if (verbose) cat("DONE.\n");
+      if (verbose) cat("Done.\n");
    }
 
 
@@ -399,7 +399,7 @@ lbsCreate <- function(conn, verbose=TRUE)
       FROM Biblio_DocumentsSurveys
       JOIN Biblio_Surveys ON Biblio_DocumentsSurveys.IdSurvey=Biblio_Surveys.IdSurvey;";
 
-#    .lbsCreateView(conn, "ViewBiblio_DocumentsSurveys", query, verbose);
+   .lbsCreateView(conn, "ViewBiblio_DocumentsSurveys", query, verbose);
 
 
    query <- "CREATE VIEW ViewBiblio_DocumentsCategories AS
@@ -407,27 +407,27 @@ lbsCreate <- function(conn, verbose=TRUE)
          IdDocument AS IdDocument,
          DocSrcCat.IdCategory AS IdCategory,
          DocSrcCat.Description AS Description,
-         DocSrcCat.IdCategoryGroup AS IdCategoryGroup,
-         Biblio_Categories.Description AS DescriptionGroup
+         DocSrcCat.IdCategoryParent AS IdCategoryParent,
+         Biblio_Categories.Description AS DescriptionParent
       FROM
       (
          SELECT
             Biblio_Documents.IdDocument AS IdDocument,
             Biblio_SourcesCategories.IdCategory AS IdCategory,
             Biblio_Categories.Description AS Description,
-            Biblio_Categories.IdCategoryGroup AS IdCategoryGroup
+            Biblio_Categories.IdCategoryParent AS IdCategoryParent
          FROM Biblio_Documents
          JOIN Biblio_SourcesCategories ON Biblio_Documents.IdSource=Biblio_SourcesCategories.IdSource
          JOIN Biblio_Categories ON Biblio_SourcesCategories.IdCategory=Biblio_Categories.IdCategory
       ) AS DocSrcCat
-      JOIN Biblio_Categories ON DocSrcCat.IdCategoryGroup=Biblio_Categories.IdCategory;";
+      JOIN Biblio_Categories ON DocSrcCat.IdCategoryParent=Biblio_Categories.IdCategory;";
 
-#    .lbsCreateView(conn, "ViewBiblio_DocumentsCategories", query, verbose);
+   .lbsCreateView(conn, "ViewBiblio_DocumentsCategories", query, verbose);
 
    # -------------------------------------------------------------------
 
    if (verbose) cat("Your Local Bibliometric Storage has been created.
-   Perhaps you may want to use Scopus_ImportSources(...) to import source information.\n");
+   Perhaps now you may wish to use Scopus_ImportSources(...) to import source information.\n");
 
    return(TRUE);
 }

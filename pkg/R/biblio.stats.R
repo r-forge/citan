@@ -228,7 +228,8 @@ lbsDescriptiveStats <- function(conn,
    if (is.null(which)) return();
 
    ## -----------------------------------------------------
-   ## User interaction scheme is based on plot.lm() code
+   ## UI
+   # This user interaction scheme is based on the code of plot.lm() function
 
    show <- rep(FALSE, 7)
    show[which] <- TRUE
@@ -312,7 +313,7 @@ lbsDescriptiveStats <- function(conn,
    if (any(show[6L:6L]))
    {
       query <- sprintf(
-         "SELECT DISTINCT DocInfo.IdDocument, IdCategoryGroup, DescriptionGroup
+         "SELECT DISTINCT DocInfo.IdDocument, IdCategoryParent, DescriptionParent
          FROM ViewBiblio_DocumentsCategories
          JOIN
          (
@@ -328,7 +329,7 @@ lbsDescriptiveStats <- function(conn,
    if (show[6L])
    {
       mergepercent <- 0.017;
-      tab <- table(as.factor(res$DescriptionGroup));
+      tab <- table(as.factor(res$DescriptionParent));
 
       tab2 <- tab[tab>mergepercent*sum(tab)];
       tab2 <- c(tab2, "Other"=sum(tab[tab<=mergepercent*sum(tab)]));

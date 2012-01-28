@@ -1,6 +1,6 @@
 ## This file is part of the CITAN library.
 ##
-## Copyright 2011 Marek Gagolewski
+## Copyright 2011-2012 Marek Gagolewski
 ##
 ##
 ## CITAN is free software: you can redistribute it and/or modify
