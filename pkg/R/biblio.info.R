@@ -24,7 +24,7 @@ NA
 
 
 #' Retrieves basic information on given authors.
-#' 
+#'
 #' @title Retrieve author information
 #' @param conn a connection object as produced by \code{\link{lbsConnect}}.
 #' @param idAuthors a numeric or integer vector with author identifiers (see column \code{IdAuthor} in the table \code{Biblio_Authors}).
@@ -33,6 +33,7 @@ NA
 #' \itemize{
 #' \item \code{IdAuthor} --- numeric; author's identifier in the table \code{Biblio_Authors},
 #' \item \code{Name} --- character; author's name.
+#' \item \code{AuthorGroup} --- character; author group (used to merge author records).
 #' }
 #' @examples
 #' \dontrun{
@@ -43,40 +44,40 @@ NA
 #' ## ...}
 #' @seealso \code{\link{lbsSearchAuthors}}, \code{\link{lbsSearchDocuments}},
 #' \code{\link{lbsGetInfoDocuments}},\cr
-#' \code{\link{as.character.authorinfo}}, \code{\link{print.authorinfo}}, 
+#' \code{\link{as.character.authorinfo}}, \code{\link{print.authorinfo}},
 #' @export
 lbsGetInfoAuthors <- function(conn, idAuthors)
 {
-	CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
+   CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
 
-		
-	if (is.null(idAuthors) || (class(idAuthors) != "numeric" && class(idAuthors) != "integer"))
-		stop("'idAuthors' must be a nonempty numeric vector.");
-		
-	query <- sprintf("SELECT IdAuthor, Name FROM Biblio_Authors WHERE IdAuthor IN (%s)",
-			paste(idAuthors, collapse=","));
-			
-	res <- dbGetQuery(conn, query);
-	n <- nrow(res);
-	out <- list();
-	length(out) <- n;
-	
-	
-	
-	if (n < 1) return(NULL);
-	
-	for (i in 1:n)
-	{
-		out[[i]] <- list(IdAuthor=res[i,1], Name=res[i,2]);
-		class(out[[i]]) <- "authorinfo";
-	}
 
-	return(out);
+   if (is.null(idAuthors) || (class(idAuthors) != "numeric" && class(idAuthors) != "integer"))
+      stop("'idAuthors' must be a nonempty numeric vector.");
+
+   query <- sprintf("SELECT IdAuthor, Name, AuthorGroup FROM Biblio_Authors WHERE IdAuthor IN (%s)",
+         paste(idAuthors, collapse=","));
+
+   res <- dbGetQuery(conn, query);
+   n <- nrow(res);
+   out <- list();
+   length(out) <- n;
+
+
+
+   if (n < 1) return(NULL);
+
+   for (i in 1:n)
+   {
+      out[[i]] <- list(IdAuthor=res[i,1], Name=res[i,2], AuthorGroup=res[i,3]);
+      class(out[[i]]) <- "authorinfo";
+   }
+
+   return(out);
 }
 
 
 #' Retrieves information on given documents.
-#' 
+#'
 #' @title Retrieve document information
 #' @param conn a connection object as produced by \code{\link{lbsConnect}}.
 #' @param idDocuments a numeric or integer vector with document identifiers (see column \code{IdDocument} in the table \code{Biblio_Documents}).
@@ -107,70 +108,70 @@ lbsGetInfoAuthors <- function(conn, idAuthors)
 #' @export
 lbsGetInfoDocuments <- function(conn, idDocuments)
 {
-	CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
-
-		
-	if (is.null(idDocuments) || (class(idDocuments) != "numeric" && class(idDocuments) != "integer"))
-		stop("'idDocuments' must be a nonempty numeric vector.");
-		
-	idDocuments_str <- paste(idDocuments, collapse=",");
-	query <- sprintf("SELECT IdDocument, Title, BibEntry, AlternativeId, Pages, Citations, Year, Type
-			FROM Biblio_Documents WHERE IdDocument IN (%s) ORDER BY IdDocument",
-			idDocuments_str);
-			
-	res <- dbGetQuery(conn, query);
-	n <- nrow(res);
-	out <- list();
-	length(out) <- n;
-
-	
-	if (n < 1) return(NULL);
-	
-	query2 <- sprintf("SELECT DISTINCT IdDocument, Biblio_Authors.IdAuthor, Name FROM
-		Biblio_AuthorsDocuments
-		JOIN Biblio_Authors ON Biblio_Authors.IdAuthor=Biblio_AuthorsDocuments.IdAuthor
-		WHERE IdDocument IN (%s) ORDER BY IdDocument",
-		idDocuments_str);
-	res2 <- dbGetQuery(conn, query2);
-	stopifnot(nrow(res2) >= 1);
-	
-
-	i <- 1;
-	k <- 1;
-	m <- nrow(res2);
-	
-	while (i <= m)
-	{
-		stopifnot(res2$IdDocument[i] == res$IdDocument[k]);
-		
-		j <- i+1;
-		while (j<=m && res2$IdDocument[i] == res2$IdDocument[j])
-			j <- j+1;
-			
-		authors <- list();
-		length(authors) <- j-i;
-		for (u in i:(j-1))
-		{
-			authors[[u-i+1]] <- list(IdAuthor=res2[u,2], Name=res2[u,3]);
-			class(authors[[u-i+1]]) <- "authorinfo";
-		}
-		
-		doc <- list(IdDocument=res[k,1], Authors=authors, Title=res[k,2], BibEntry=res[k,3],
-			AlternativeId=res[k,4], Pages=res[k,5], Citations=res[k,6],
-			Year=res[k,7], Type=CITAN:::.lbs_DocumentType_ShortToFull(res[k,8]));
-			
-		class(doc) <- "docinfo";
-	
-		out[[k]] <- doc;
-		
-		
-		i <- j;
-		k <- k+1;
-	}
-	stopifnot(k-1 == n);
+   CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
 
 
-	return(out);
+   if (is.null(idDocuments) || (class(idDocuments) != "numeric" && class(idDocuments) != "integer"))
+      stop("'idDocuments' must be a nonempty numeric vector.");
+
+   idDocuments_str <- paste(idDocuments, collapse=",");
+   query <- sprintf("SELECT IdDocument, Title, BibEntry, AlternativeId, Pages, Citations, Year, Type
+         FROM Biblio_Documents WHERE IdDocument IN (%s) ORDER BY IdDocument",
+         idDocuments_str);
+
+   res <- dbGetQuery(conn, query);
+   n <- nrow(res);
+   out <- list();
+   length(out) <- n;
+
+
+   if (n < 1) return(NULL);
+
+   query2 <- sprintf("SELECT DISTINCT IdDocument, Biblio_Authors.IdAuthor, Biblio_Authors.Name, Biblio_Authors.AuthorGroup FROM
+      Biblio_AuthorsDocuments
+      JOIN Biblio_Authors ON Biblio_Authors.IdAuthor=Biblio_AuthorsDocuments.IdAuthor
+      WHERE IdDocument IN (%s) ORDER BY IdDocument",
+      idDocuments_str);
+   res2 <- dbGetQuery(conn, query2);
+   stopifnot(nrow(res2) >= 1);
+
+
+   i <- 1;
+   k <- 1;
+   m <- nrow(res2);
+
+   while (i <= m)
+   {
+      stopifnot(res2$IdDocument[i] == res$IdDocument[k]);
+
+      j <- i+1;
+      while (j<=m && res2$IdDocument[i] == res2$IdDocument[j])
+         j <- j+1;
+
+      authors <- list();
+      length(authors) <- j-i;
+      for (u in i:(j-1))
+      {
+         authors[[u-i+1]] <- list(IdAuthor=res2[u,2], Name=res2[u,3], AuthorGroup=res2[u,4]);
+         class(authors[[u-i+1]]) <- "authorinfo";
+      }
+
+      doc <- list(IdDocument=res[k,1], Authors=authors, Title=res[k,2], BibEntry=res[k,3],
+         AlternativeId=res[k,4], Pages=res[k,5], Citations=res[k,6],
+         Year=res[k,7], Type=CITAN:::.lbs_DocumentType_ShortToFull(res[k,8]));
+
+      class(doc) <- "docinfo";
+
+      out[[k]] <- doc;
+
+
+      i <- j;
+      k <- k+1;
+   }
+   stopifnot(k-1 == n);
+
+
+   return(out);
 }
 
 
@@ -200,19 +201,19 @@ lbsGetInfoDocuments <- function(conn, idDocuments)
 #' \code{\link{lbsGetInfoDocuments}}
 as.character.docinfo <- function(x, ...)
 {
-	ret <-            sprintf("IdDocument: %g", x$IdDocument);
-	ret <- paste(ret, sprintf("AlternativeId:   %s", x$AlternativeId), sep="\n");
-	ret <- paste(ret, sprintf("Title:      %s", x$Title), sep="\n");
-	ret <- paste(ret, sprintf("BibEntry:   %s", x$BibEntry), sep="\n");
-	ret <- paste(ret, sprintf("Year:       %s", x$Year), sep="\n");
-	ret <- paste(ret, sprintf("Type:       %s", x$Type), sep="\n");
-	ret <- paste(ret, sprintf("Citations:  %s", x$Citations), sep="\n");
-	ret <- paste(ret, sprintf("Authors:    %s\n",
-		paste(
-			sapply(x$Authors, function(y) paste(y$Name, y$IdAuthor, sep="/")),
-			collapse=", ")
-		), sep="\n");
-	return(ret);
+   ret <-            sprintf("IdDocument:    %g", x$IdDocument);
+   ret <- paste(ret, sprintf("AlternativeId: %s", x$AlternativeId), sep="\n");
+   ret <- paste(ret, sprintf("Title:         %s", x$Title), sep="\n");
+   ret <- paste(ret, sprintf("BibEntry:      %s", x$BibEntry), sep="\n");
+   ret <- paste(ret, sprintf("Year:          %s", x$Year), sep="\n");
+   ret <- paste(ret, sprintf("Type:          %s", x$Type), sep="\n");
+   ret <- paste(ret, sprintf("Citations:     %s", x$Citations), sep="\n");
+   ret <- paste(ret, sprintf("Authors:       %s\n",
+      paste(
+         sapply(x$Authors, function(y) paste(y$Name, y$IdAuthor, y$AuthorGroup, sep="/")),
+         collapse=", ")
+      ), sep="\n");
+   return(ret);
 }
 
 #' Prints out an object of type \code{docinfo}. Such an object is returned by e.g. \code{\link{lbsGetInfoDocuments}}.
@@ -226,7 +227,7 @@ as.character.docinfo <- function(x, ...)
 #' @seealso \code{\link{as.character.docinfo}}, \code{\link{lbsSearchDocuments}}, \code{\link{lbsGetInfoDocuments}}
 print.docinfo <- function(x, ...)
 {
-	cat(as.character(x));
+   cat(as.character(x));
 }
 
 
@@ -249,9 +250,10 @@ print.docinfo <- function(x, ...)
 #' @seealso \code{\link{print.authorinfo}}, \code{\link{lbsSearchAuthors}}, \code{\link{lbsGetInfoAuthors}}
 as.character.authorinfo <- function(x, ...)
 {
-	ret <-            sprintf("IdAuthor: %g",   x$IdAuthor);
-	ret <- paste(ret, sprintf("Name:     %s\n", x$Name), sep="\n");
-	return(ret);
+   ret <-            sprintf("IdAuthor:    %g",   x$IdAuthor);
+   ret <- paste(ret, sprintf("Name:        %s", x$Name), sep="\n");
+   ret <- paste(ret, sprintf("AuthorGroup: %s\n", x$AuthorGroup), sep="\n");
+   return(ret);
 }
 
 #' Prints out an object of type \code{authorinfo}. Such an object is returned by e.g. \code{\link{lbsGetInfoAuthors}}.
@@ -265,7 +267,7 @@ as.character.authorinfo <- function(x, ...)
 #' @seealso \code{\link{as.character.authorinfo}}, \code{\link{lbsSearchAuthors}}, \code{\link{lbsGetInfoAuthors}}
 print.authorinfo <- function(x, ...)
 {
-	cat(as.character(x));
+   cat(as.character(x));
 }
 
 

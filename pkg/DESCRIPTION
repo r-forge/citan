@@ -65,3 +65,4 @@ Collate:
     'string.R'
     'biblio.duplicates.authors.R'
     'biblio.duplicates.documents.R'
+    'biblio.tidy.R'

@@ -163,7 +163,7 @@ lbsDescriptiveStats <- function(conn,
          print(res);
       }
 
-      cat("  * Note that a document may be added from many surveys/files.\n");
+      cat("  * Note that a document may belong to many surveys/files.\n");
       cat("\n");
    }
    

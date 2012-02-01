@@ -22,39 +22,6 @@ NA
 
 
 
-#' Cleans up a Local Bibliometric Storage
-#' by removing all authors with no documents and executing the \code{VACUUM}
-#' SQL command.
-#'
-#' @title Clean up a Local Bibliometric Storage
-#' @param conn database connection object, see \code{\link{lbsConnect}}.
-#' @seealso \code{\link{lbsConnect}}, \code{\link{lbsCreate}},
-#' \code{\link{Scopus_ImportSources}},
-#' \code{\link{lbsDeleteAllAuthorsDocuments}},
-#' \code{\link{dbCommit}}, \code{\link{dbRollback}}
-#' @return \code{TRUE} on success.
-#' @export
-lbsTidy <- function(conn)
-{
-   CITAN:::.lbsCheckConnection(conn); # will stop on invalid/dead connection
-
-   ## REMOVE ALL AUTHORS WITHOUT DOCUMENTS
-   dbExecQuery(conn, "DELETE FROM Biblio_Authors WHERE IdAuthor IN (
-      SELECT Biblio_Authors.IdAuthor
-      FROM Biblio_Authors
-      LEFT JOIN Biblio_AuthorsDocuments ON Biblio_Authors.IdAuthor=Biblio_AuthorsDocuments.IdAuthor
-      WHERE IdDocument IS NULL
-   )");
-   chg <- dbGetQuery(conn, "SELECT changes()")[1,1];
-   cat(sprintf("%g authors with no documents deleted.\n", chg));
-
-   ## VACUUM
-   dbExecQuery(conn, "VACUUM", FALSE);
-
-   return(TRUE);
-}
-
-
 #' Clears a Local Bibliometric Storage by dropping all tables
 #' named \code{Biblio_*} and all views named \code{ViewBiblio_*}.
 #'
