@@ -172,16 +172,19 @@ lbsDescriptiveStats <- function(conn,
    ## Basic stats
 
    res <- dbGetQuery(conn, "SELECT COUNT(idSource) FROM Biblio_Sources;");
-   cat(sprintf("Number of sources in your LBS:          %g\n", res[1,1]));
+   cat(sprintf("Number of sources in your LBS:           %g\n", res[1,1]));
 
    res <- dbGetQuery(conn, "SELECT COUNT(idDocument) FROM Biblio_Documents;");
-   cat(sprintf("Number of documents in your LBS:        %g\n", res[1,1]));
+   cat(sprintf("Number of documents in your LBS:         %g\n", res[1,1]));
 
    res <- dbGetQuery(conn, "SELECT COUNT(idAuthor) FROM Biblio_Authors;");
-   cat(sprintf("Number of author records in your LBS:   %g\n", res[1,1]));
+   cat(sprintf("Number of author records in your LBS:    %g\n", res[1,1]));
 
-   res <- dbGetQuery(conn, "SELECT COUNT(idAuthor) FROM Biblio_Authors GROUP BY AuthorGroup;");
-   cat(sprintf("Number of distinct authors in your LBS: %g\n", res[1,1]));
+   res <- dbGetQuery(conn, "SELECT COUNT(*) FROM (SELECT AuthorGroup FROM Biblio_Authors GROUP BY AuthorGroup);");
+   cat(sprintf("Number of author groups in your LBS:     %g\n", res[1,1]));
+
+   res <- dbGetQuery(conn, "SELECT COUNT(*) FROM (SELECT IdAuthor FROM Biblio_Authors WHERE AuthorGroup IS NULL);");
+   cat(sprintf("Number of ungrouped authors in your LBS: %g\n", res[1,1]));
 
    cat("\n");
 
@@ -225,7 +228,7 @@ lbsDescriptiveStats <- function(conn,
 
    which <- as.integer(which);
    which <- which[which >=1 & which <= 7];
-   if (is.null(which)) return();
+   if (length(which) < 1) return();
 
    ## -----------------------------------------------------
    ## UI
