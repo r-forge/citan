@@ -130,8 +130,8 @@ NA
 #' \preformatted{
 #' CREATE TABLE Biblio_Authors (
 #'    IdAuthor        INTEGER PRIMARY KEY AUTOINCREMENT,
-#'    Name            VARCHAR(63) NOT NULL UNIQUE,
-#'    AuthorGroup     UNSIGNED BIG INT # used to merge authors with non-unique representations
+#'    Name            VARCHAR(63) NOT NULL,
+#'    AuthorGroup     VARCHAR(31), # used to merge authors with non-unique representations
 #' );
 #' }
 #'
@@ -366,8 +366,8 @@ lbsCreate <- function(conn, verbose=TRUE)
 
    query <- "CREATE TABLE Biblio_Authors (
       IdAuthor     INTEGER PRIMARY KEY AUTOINCREMENT,
-      Name         VARCHAR(63) NOT NULL UNIQUE,
-      AuthorGroup  UNSIGNED BIG INT
+      Name         VARCHAR(63) NOT NULL,
+      AuthorGroup  VARCHAR(31)
    );"
 
    .lbsCreateTable(conn, "Biblio_Authors", query, verbose);
