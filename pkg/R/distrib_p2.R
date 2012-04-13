@@ -29,7 +29,7 @@
 #' @seealso \code{\link{dpareto2}}, \code{\link{ppareto2}}, \code{\link{qpareto2}}, \code{\link{pareto2.zsestimate}}, \code{\link{pareto2.mlekestimate}}, \code{\link{pareto2.goftest}}, \code{\link{pareto2.ftest}}
 rpareto2 <- function(n, k=1, s=1)
 {
-	s*((runif(n)^(-1/k)) - 1);
+	s*((runif(n)^(-1/k)) - 1); # s*(exp(-log(runif(n))/k)-1); - faster?
 }
 
 
