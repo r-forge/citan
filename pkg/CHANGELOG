@@ -5,7 +5,7 @@ CITAN PACKAGE CHANGELOG
 
 *******************************************************************************
 
-1.01 /under development/
+2012.06-1 /under development/
    * New versioning scheme (major changes in LBS).
    * Scopus_SourceList and Scopus_ASJC - updated (Oct 2011).
    * Scopus_ImportSources - rewritten, optimized.
